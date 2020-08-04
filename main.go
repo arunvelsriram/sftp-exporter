@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	sftpConfig := SFTPConfig{"host": "localhost", "port": "22", "user": "foo", "pass": pass}
+	sftpConfig := SFTPConfig{"host": "localhost", "port": "2220", "user": "basic", "pass": pass}
 	fs, err := sftp.NewFs("my-sftp", "", sftpConfig)
 	if err != nil {
 		panic(err)

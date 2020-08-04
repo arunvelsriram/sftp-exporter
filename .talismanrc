@@ -1,3 +1,3 @@
 fileignoreconfig:
-- filename: go.sum
-  checksum: d84e96be759a6a4957b0009e64b4b5f8423b5c42c053df194437fa514823da96
+- filename: docker-compose.yml
+  checksum: aef1bf70035cca8f8be21bbe8d830fa30ca54fab8ff33f7122faa80b1312d8f4

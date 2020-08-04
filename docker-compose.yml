@@ -1,0 +1,8 @@
+version: "3.3"
+
+services:
+  sftp-basic:
+    image: atmoz/sftp
+    ports:
+      - "2220:22"
+    command: basic:pass:::upload
