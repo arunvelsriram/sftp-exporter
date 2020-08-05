@@ -1,3 +1,5 @@
 fileignoreconfig:
-- filename: go.sum
-  checksum: a258e003ce12595c93c2efda54152f1581431d87e5ca1b15fb0b7619269da482
+- filename: pkg/constants/constants.go
+  checksum: 38baf667fe2724f300ba5693fc46669b2348e45b621156a5f78496337f4cd974
+- filename: pkg/config/config.go
+  checksum: 571598b88d0e90d078905343c5d0742fc76707aa2df4be0c51aafa931724383c

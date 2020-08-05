@@ -1,12 +1,17 @@
 package config
 
-type SFTPConfig map[string]string
-
-func (c SFTPConfig) Get(key string) (string, bool) {
-	value, ok := c[key]
-	return value, ok
+type SFTPConfig struct {
+	Host string
+	Port int
+	User string
+	Pass string
 }
 
-func (c SFTPConfig) Set(key, value string) {
-	c[key] = value
+func (c SFTPConfig) toConfigMap() Configmap {
+	return Configmap{
+		"host": c.Host,
+		"port": string(c.Port),
+		"user": c.User,
+		"pass": c.Pass,
+	}
 }
