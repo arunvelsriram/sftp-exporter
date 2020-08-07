@@ -49,5 +49,5 @@ func init() {
 
 func initConfig() {
 	viper.AutomaticEnv()
-	cfg = config.NewConfig()
+	cfg = config.LoadConfig()
 }

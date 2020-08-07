@@ -15,7 +15,7 @@ func TestNewConfig(t *testing.T) {
 	viper.Set(ViperKeySFTPUser, "arun")
 	viper.Set(ViperKeySFTPPass, "arun@123")
 
-	c := NewConfig()
+	c := LoadConfig()
 
 	expected := sftpExporterConfig{
 		Port: 8080,

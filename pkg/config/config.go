@@ -15,7 +15,7 @@ type sftpExporterConfig struct {
 	SFTPConfig SFTPConfig
 }
 
-func NewConfig() Config {
+func LoadConfig() Config {
 	return sftpExporterConfig{
 		Port: viper.GetInt(c.ViperKeyPort),
 		SFTPConfig: SFTPConfig{
