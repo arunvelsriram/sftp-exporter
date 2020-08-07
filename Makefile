@@ -26,3 +26,6 @@ lint: install-golangci-lint ## run lint
 
 build: # compile the app
 	go build -o ./bin/$(APP) main.go
+
+test: # run unit tests
+	go test ./...
