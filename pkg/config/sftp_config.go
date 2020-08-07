@@ -1,5 +1,7 @@
 package config
 
+import "fmt"
+
 type SFTPConfig struct {
 	Host string
 	Port int
@@ -10,7 +12,7 @@ type SFTPConfig struct {
 func (c SFTPConfig) toConfigMap() Configmap {
 	return Configmap{
 		"host": c.Host,
-		"port": string(c.Port),
+		"port": fmt.Sprintf("%d", c.Port),
 		"user": c.User,
 		"pass": c.Pass,
 	}

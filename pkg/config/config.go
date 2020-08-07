@@ -1,7 +1,7 @@
 package config
 
 import (
-	. "github.com/arunvelsriram/sftp-exporter/pkg/constants"
+	c "github.com/arunvelsriram/sftp-exporter/pkg/constants"
 	"github.com/spf13/viper"
 )
 
@@ -17,7 +17,7 @@ type sftpExporterConfig struct {
 
 func NewConfig() Config {
 	return sftpExporterConfig{
-		Port: viper.GetInt(ViperKeyPort),
+		Port: viper.GetInt(c.ViperKeyPort),
 		SFTPConfig: SFTPConfig{
 			Host: viper.GetString("sftp_host"),
 			Port: viper.GetInt("sftp_port"),
