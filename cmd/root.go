@@ -18,7 +18,10 @@ var rootCmd = &cobra.Command{
 	Short: "",
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
-		server.Start(cfg)
+		if err := server.Start(cfg); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	},
 }
 
