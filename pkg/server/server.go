@@ -5,14 +5,18 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/arunvelsriram/sftp-exporter/pkg/collector"
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	"github.com/gorilla/handlers"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Start(cfg config.Config) error {
-	r := http.NewServeMux()
+	sftpCollector := collector.NewSFTPCollector()
+	prometheus.MustRegister(sftpCollector)
 
+	r := http.NewServeMux()
 	r.Handle("/healthz", healthzHandler())
 	r.Handle("/metrics", metricsHandler())
 
@@ -33,6 +37,6 @@ func healthzHandler() http.Handler {
 }
 
 func metricsHandler() http.Handler {
-	handler := prometheus.Handler()
+	handler := promhttp.Handler()
 	return withLogging(handler)
 }

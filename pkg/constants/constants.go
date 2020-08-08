@@ -17,3 +17,5 @@ const (
 	FlagSFTPUser    = "sftp-user"
 	FlagSFTPPass    = "sftp-pass"
 )
+
+const Namespace = "sftp"
