@@ -9,6 +9,7 @@ import (
 )
 
 func TestNewConfig(t *testing.T) {
+	viper.Set(ViperKeyBindAddress, "127.0.0.1")
 	viper.Set(ViperKeyPort, 8080)
 	viper.Set(ViperKeySFTPHost, "localhost")
 	viper.Set(ViperKeySFTPPort, 22)

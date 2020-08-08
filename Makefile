@@ -29,3 +29,7 @@ build: # compile the app
 
 test: # run unit tests
 	go test ./...
+
+run: # run the app
+	go run main.go
+

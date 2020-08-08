@@ -6,6 +6,7 @@ import (
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	c "github.com/arunvelsriram/sftp-exporter/pkg/constants"
+	"github.com/arunvelsriram/sftp-exporter/pkg/server"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -17,7 +18,7 @@ var rootCmd = &cobra.Command{
 	Short: "",
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(cfg)
+		server.Start(cfg)
 	},
 }
 
@@ -31,20 +32,23 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.PersistentFlags().String(c.FlagBindAddress, "127.0.0.1", "exporter bind address")
+	_ = viper.BindPFlag(c.ViperKeyBindAddress, rootCmd.PersistentFlags().Lookup(c.FlagBindAddress))
+
 	rootCmd.PersistentFlags().Int(c.FlagPort, 8080, "exporter port")
-	viper.BindPFlag(c.ViperKeyPort, rootCmd.PersistentFlags().Lookup(c.FlagPort))
+	_ = viper.BindPFlag(c.ViperKeyPort, rootCmd.PersistentFlags().Lookup(c.FlagPort))
 
 	rootCmd.PersistentFlags().String(c.FlagSFTPHost, "localhost", "sftp host")
-	viper.BindPFlag(c.ViperKeySFTPHost, rootCmd.PersistentFlags().Lookup(c.FlagSFTPHost))
+	_ = viper.BindPFlag(c.ViperKeySFTPHost, rootCmd.PersistentFlags().Lookup(c.FlagSFTPHost))
 
 	rootCmd.PersistentFlags().Int(c.FlagSFTPPort, 22, "sftp port")
-	viper.BindPFlag(c.ViperKeySFTPPort, rootCmd.PersistentFlags().Lookup(c.FlagSFTPPort))
+	_ = viper.BindPFlag(c.ViperKeySFTPPort, rootCmd.PersistentFlags().Lookup(c.FlagSFTPPort))
 
 	rootCmd.PersistentFlags().String(c.FlagSFTPUser, "", "sftp user")
-	viper.BindPFlag(c.ViperKeySFTPUser, rootCmd.PersistentFlags().Lookup(c.FlagSFTPUser))
+	_ = viper.BindPFlag(c.ViperKeySFTPUser, rootCmd.PersistentFlags().Lookup(c.FlagSFTPUser))
 
 	rootCmd.PersistentFlags().String(c.FlagSFTPPass, "", "sftp user")
-	viper.BindPFlag(c.ViperKeySFTPPass, rootCmd.PersistentFlags().Lookup(c.FlagSFTPPass))
+	_ = viper.BindPFlag(c.ViperKeySFTPPass, rootCmd.PersistentFlags().Lookup(c.FlagSFTPPass))
 }
 
 func initConfig() {

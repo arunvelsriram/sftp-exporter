@@ -1,5 +1,7 @@
 fileignoreconfig:
-- filename: pkg/config/config_test.go
-  checksum: 4c14847b40a2f83bed59a059da9bcc13f0a7d0220c35c680f882f6b911faaa54
-- filename: pkg/config/sftp_config_test.go
-  checksum: 4f850ccb9ab661a092bd3e1c370cc17a2fc3313f2542a2bb4420050cb425ec1a
+- filename: go.sum
+  checksum: 9d7daef64d83b02f78e55e30b627e82e3b9209901fffa55d2f3dbabb53091fff
+- filename: pkg/config/config.go
+  checksum: f351a8fd809535acf79385a2bfe1318cebe2a348d762692d0f967b100dd4c547
+- filename: pkg/constants/constants.go
+  checksum: 5f9ca57d9c3713a1a774e01d1aa0730953cd35828b5202e81eb5cb146f644652

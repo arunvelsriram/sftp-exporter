@@ -6,25 +6,32 @@ import (
 )
 
 type Config interface {
+	GetBindAddress() string
 	GetPort() int
 	GetSFTPConfig() SFTPConfig
 }
 
 type sftpExporterConfig struct {
-	Port       int
-	SFTPConfig SFTPConfig
+	BindAddress string
+	Port        int
+	SFTPConfig  SFTPConfig
 }
 
 func LoadConfig() Config {
 	return sftpExporterConfig{
-		Port: viper.GetInt(c.ViperKeyPort),
+		BindAddress: viper.GetString(c.ViperKeyBindAddress),
+		Port:        viper.GetInt(c.ViperKeyPort),
 		SFTPConfig: SFTPConfig{
-			Host: viper.GetString("sftp_host"),
-			Port: viper.GetInt("sftp_port"),
-			User: viper.GetString("sftp_user"),
-			Pass: viper.GetString("sftp_pass"),
+			Host: viper.GetString(c.ViperKeySFTPHost),
+			Port: viper.GetInt(c.ViperKeySFTPPort),
+			User: viper.GetString(c.ViperKeySFTPUser),
+			Pass: viper.GetString(c.ViperKeySFTPPass),
 		},
 	}
+}
+
+func (c sftpExporterConfig) GetBindAddress() string {
+	return c.BindAddress
 }
 
 func (c sftpExporterConfig) GetPort() int {
