@@ -13,7 +13,7 @@ help: ## Prints help (only for targets with comment)
 install-deps: # install dependencies
 	go mod tidy -v
 
-fmt: # format code
+fmt: ## format code
 	go fmt
 
 install-golangci-lint: ## install golangci-lint
@@ -22,14 +22,16 @@ ifeq ($(GOLANGCI_LINT),)
 endif
 
 lint: install-golangci-lint ## run lint
-	$(GOLANGCI_LINT) run
+	$(GOLANGCI_LINT) run -v
 
-build: # compile the app
+build: ## compile the app
 	go build -o ./bin/$(APP) main.go
 
-test: # run unit tests
+test: ## run unit tests
 	go test ./...
 
-run: # run the app
+run: ## run the app
 	go run main.go
+
+check: install-deps fmt lint test ## runs fmt, lint, test
 
