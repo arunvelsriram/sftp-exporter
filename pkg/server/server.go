@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/arunvelsriram/sftp-exporter/pkg/client"
 	"github.com/arunvelsriram/sftp-exporter/pkg/collector"
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	"github.com/prometheus/client_golang/prometheus"
@@ -11,7 +12,8 @@ import (
 )
 
 func Start(cfg config.Config) error {
-	sftpCollector := collector.NewSFTPCollector(cfg)
+	clientFactory := client.NewFactory(cfg)
+	sftpCollector := collector.NewSFTPCollector(cfg, clientFactory)
 	prometheus.MustRegister(sftpCollector)
 
 	r := http.NewServeMux()

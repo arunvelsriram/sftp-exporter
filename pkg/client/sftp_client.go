@@ -10,18 +10,45 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-type SFTPClient interface {
-	Close()
-	FSStat() (*model.FSStat, error)
+type (
+	SFTPClient interface {
+		Close()
+		FSStat() (*model.FSStat, error)
+	}
+
+	defaultSFTPClient struct {
+		sshClient  *ssh.Client
+		sftpClient *sftp.Client
+		config     config.Config
+	}
+)
+
+func (d defaultSFTPClient) Close() {
+	if err := d.sftpClient.Close(); err != nil {
+		log.WithFields(log.Fields{
+			"event": "closing SFTP connection"},
+		).Error(err)
+	}
+	if err := d.sshClient.Close(); err != nil {
+		log.WithFields(log.Fields{
+			"event": "closing SSH connection"},
+		).Error(err)
+	}
 }
 
-type defaultSFTPClient struct {
-	sshClient  *ssh.Client
-	sftpClient *sftp.Client
-	config     config.Config
+func (d defaultSFTPClient) FSStat() (*model.FSStat, error) {
+	statVFS, err := d.sftpClient.StatVFS("/upload")
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.FSStat{
+		TotalSpace: float64(statVFS.TotalSpace()),
+		FreeSpace:  float64(statVFS.FreeSpace()),
+	}, nil
 }
 
-func NewSFTPClient(cfg config.Config) (SFTPClient, error) {
+func newSFTPClient(cfg config.Config) (SFTPClient, error) {
 	addr := fmt.Sprintf("%s:%d", cfg.GetSFTPHost(), cfg.GetSFTPPort())
 	clientConfig := &ssh.ClientConfig{
 		User: cfg.GetSFTPUser(),
@@ -50,30 +77,5 @@ func NewSFTPClient(cfg config.Config) (SFTPClient, error) {
 		sshClient:  sshClient,
 		sftpClient: sftpClient,
 		config:     cfg,
-	}, nil
-}
-
-func (d defaultSFTPClient) Close() {
-	if err := d.sftpClient.Close(); err != nil {
-		log.WithFields(log.Fields{
-			"event": "closing SFTP connection"},
-		).Error(err)
-	}
-	if err := d.sshClient.Close(); err != nil {
-		log.WithFields(log.Fields{
-			"event": "closing SSH connection"},
-		).Error(err)
-	}
-}
-
-func (d defaultSFTPClient) FSStat() (*model.FSStat, error) {
-	statVFS, err := d.sftpClient.StatVFS("/upload")
-	if err != nil {
-		return nil, err
-	}
-
-	return &model.FSStat{
-		TotalSpace: float64(statVFS.TotalSpace()),
-		FreeSpace:  float64(statVFS.FreeSpace()),
 	}, nil
 }
