@@ -13,7 +13,7 @@ import (
 )
 
 func Start(cfg config.Config) error {
-	sftpCollector := collector.NewSFTPCollector()
+	sftpCollector := collector.NewSFTPCollector(cfg)
 	prometheus.MustRegister(sftpCollector)
 
 	r := http.NewServeMux()

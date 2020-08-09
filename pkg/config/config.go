@@ -5,6 +5,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+type SFTPConfig struct {
+	Host string
+	Port int
+	User string
+	Pass string
+}
+
 type Config interface {
 	GetBindAddress() string
 	GetPort() int
@@ -40,8 +47,4 @@ func (c sftpExporterConfig) GetPort() int {
 
 func (c sftpExporterConfig) GetSFTPConfig() SFTPConfig {
 	return c.SFTPConfig
-}
-
-func (c sftpExporterConfig) GetSFTPConfigmap() Configmap {
-	return c.SFTPConfig.toConfigMap()
 }
