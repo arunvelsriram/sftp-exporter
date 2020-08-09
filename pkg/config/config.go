@@ -15,12 +15,14 @@ type SFTPConfig struct {
 type Config interface {
 	GetBindAddress() string
 	GetPort() int
+	GetLogLevel() string
 	GetSFTPConfig() SFTPConfig
 }
 
 type sftpExporterConfig struct {
 	BindAddress string
 	Port        int
+	LogLevel    string
 	SFTPConfig  SFTPConfig
 }
 
@@ -28,6 +30,7 @@ func LoadConfig() Config {
 	return sftpExporterConfig{
 		BindAddress: viper.GetString(c.ViperKeyBindAddress),
 		Port:        viper.GetInt(c.ViperKeyPort),
+		LogLevel:    viper.GetString(c.ViperKeyLogLevel),
 		SFTPConfig: SFTPConfig{
 			Host: viper.GetString(c.ViperKeySFTPHost),
 			Port: viper.GetInt(c.ViperKeySFTPPort),
@@ -47,4 +50,8 @@ func (c sftpExporterConfig) GetPort() int {
 
 func (c sftpExporterConfig) GetSFTPConfig() SFTPConfig {
 	return c.SFTPConfig
+}
+
+func (c sftpExporterConfig) GetLogLevel() string {
+	return c.LogLevel
 }

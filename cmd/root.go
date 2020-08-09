@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	c "github.com/arunvelsriram/sftp-exporter/pkg/constants"
 	"github.com/arunvelsriram/sftp-exporter/pkg/server"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 var cfg config.Config
@@ -19,16 +19,14 @@ var rootCmd = &cobra.Command{
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := server.Start(cfg); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.WithFields(log.Fields{"event": "starting server"}).Fatal(err)
 		}
 	},
 }
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.WithFields(log.Fields{"event": "executing command"}).Fatal(err)
 	}
 }
 
@@ -40,6 +38,17 @@ func init() {
 
 	rootCmd.PersistentFlags().Int(c.FlagPort, 8080, "exporter port")
 	_ = viper.BindPFlag(c.ViperKeyPort, rootCmd.PersistentFlags().Lookup(c.FlagPort))
+
+	var levels = make([]string, len(log.AllLevels))
+	for i, level := range log.AllLevels {
+		levels[i] = level.String()
+	}
+	rootCmd.PersistentFlags().String(
+		c.FlagLogLevel,
+		log.InfoLevel.String(),
+		fmt.Sprintf("log level [%s]", strings.Join(levels, " | ")),
+	)
+	_ = viper.BindPFlag(c.ViperKeyLogLevel, rootCmd.PersistentFlags().Lookup(c.FlagLogLevel))
 
 	rootCmd.PersistentFlags().String(c.FlagSFTPHost, "localhost", "sftp host")
 	_ = viper.BindPFlag(c.ViperKeySFTPHost, rootCmd.PersistentFlags().Lookup(c.FlagSFTPHost))
@@ -57,4 +66,12 @@ func init() {
 func initConfig() {
 	viper.AutomaticEnv()
 	cfg = config.LoadConfig()
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp: true,
+	})
+	level, err := log.ParseLevel(cfg.GetLogLevel())
+	if err != nil {
+		panic(err)
+	}
+	log.SetLevel(level)
 }

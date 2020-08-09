@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"fmt"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/client"
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
@@ -41,21 +41,18 @@ func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
-	client, err := client.NewSFTPClient(s.config)
+	sftpClient, err := client.NewSFTPClient(s.config)
 	if err != nil {
 		ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 0)
-		fmt.Println("failed to get create sftp connection")
-		fmt.Println(err)
-		client.Close()
+		log.WithFields(log.Fields{"event": "creating SFTP sftpClient"}).Error(err)
 		return
 	}
-	defer client.Close()
+	defer sftpClient.Close()
 	ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 1)
 
-	fsStat, err := client.FSStat()
+	fsStat, err := sftpClient.FSStat()
 	if err != nil {
-		fmt.Println("failed to get FS stat")
-		fmt.Println(err)
+		log.WithFields(log.Fields{"event": "getting FS stat"}).Error(err)
 		return
 	}
 	ch <- prometheus.MustNewConstMetric(fsTotalSpace, prometheus.GaugeValue, fsStat.TotalSpace)

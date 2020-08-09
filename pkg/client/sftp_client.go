@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	"github.com/arunvelsriram/sftp-exporter/pkg/model"
@@ -38,6 +39,11 @@ func NewSFTPClient(cfg config.Config) (SFTPClient, error) {
 
 	sftpClient, err := sftp.NewClient(sshClient)
 	if err != nil {
+		if err := sshClient.Close(); err != nil {
+			log.WithFields(log.Fields{
+				"event": "closing SFTP connection"},
+			).Error(err)
+		}
 		return nil, err
 	}
 
@@ -49,10 +55,15 @@ func NewSFTPClient(cfg config.Config) (SFTPClient, error) {
 }
 
 func (d defaultSFTPClient) Close() {
-	sftpErr := d.sftpClient.Close()
-	sshErr := d.sshClient.Close()
-	if sftpErr != nil || sshErr != nil {
-		fmt.Printf("failed to close connections\nSFTP: %v\nSSH: %v", sftpErr, sshErr)
+	if err := d.sftpClient.Close(); err != nil {
+		log.WithFields(log.Fields{
+			"event": "closing SFTP connection"},
+		).Error(err)
+	}
+	if err := d.sshClient.Close(); err != nil {
+		log.WithFields(log.Fields{
+			"event": "closing SSH connection"},
+		).Error(err)
 	}
 }
 
