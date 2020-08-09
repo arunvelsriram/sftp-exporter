@@ -39,6 +39,8 @@ type SFTPCollector struct {
 
 func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- up
+	ch <- fsTotalSpace
+	ch <- fsFreeSpace
 }
 
 func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
