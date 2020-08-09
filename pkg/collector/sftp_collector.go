@@ -19,14 +19,14 @@ var (
 
 	fsTotalSpace = prometheus.NewDesc(
 		prometheus.BuildFQName(c.Namespace, "", "filesystem_total_space_bytes"),
-		"Total space in the filesystem containing user directory",
+		"Total space in the filesystem containing the path",
 		[]string{},
 		nil,
 	)
 
 	fsFreeSpace = prometheus.NewDesc(
 		prometheus.BuildFQName(c.Namespace, "", "filesystem_free_space_bytes"),
-		"Free space in the filesystem containing user directory",
+		"Free space in the filesystem containing the path",
 		[]string{},
 		nil,
 	)
