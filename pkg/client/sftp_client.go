@@ -22,12 +22,11 @@ type defaultSFTPClient struct {
 }
 
 func NewSFTPClient(cfg config.Config) (SFTPClient, error) {
-	sftpConfig := cfg.GetSFTPConfig()
-	addr := fmt.Sprintf("%s:%d", sftpConfig.Host, sftpConfig.Port)
+	addr := fmt.Sprintf("%s:%d", cfg.GetSFTPHost(), cfg.GetSFTPPort())
 	clientConfig := &ssh.ClientConfig{
-		User: sftpConfig.User,
+		User: cfg.GetSFTPUser(),
 		Auth: []ssh.AuthMethod{
-			ssh.Password(sftpConfig.Pass),
+			ssh.Password(cfg.GetSFTPPass()),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}

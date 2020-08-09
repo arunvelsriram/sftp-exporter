@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type SFTPConfig struct {
+type sftpConfig struct {
 	Host string
 	Port int
 	User string
@@ -16,14 +16,17 @@ type Config interface {
 	GetBindAddress() string
 	GetPort() int
 	GetLogLevel() string
-	GetSFTPConfig() SFTPConfig
+	GetSFTPHost() string
+	GetSFTPPort() int
+	GetSFTPUser() string
+	GetSFTPPass() string
 }
 
 type sftpExporterConfig struct {
 	BindAddress string
 	Port        int
 	LogLevel    string
-	SFTPConfig  SFTPConfig
+	SFTPConfig  sftpConfig
 }
 
 func LoadConfig() Config {
@@ -31,7 +34,7 @@ func LoadConfig() Config {
 		BindAddress: viper.GetString(c.ViperKeyBindAddress),
 		Port:        viper.GetInt(c.ViperKeyPort),
 		LogLevel:    viper.GetString(c.ViperKeyLogLevel),
-		SFTPConfig: SFTPConfig{
+		SFTPConfig: sftpConfig{
 			Host: viper.GetString(c.ViperKeySFTPHost),
 			Port: viper.GetInt(c.ViperKeySFTPPort),
 			User: viper.GetString(c.ViperKeySFTPUser),
@@ -48,10 +51,22 @@ func (c sftpExporterConfig) GetPort() int {
 	return c.Port
 }
 
-func (c sftpExporterConfig) GetSFTPConfig() SFTPConfig {
-	return c.SFTPConfig
-}
-
 func (c sftpExporterConfig) GetLogLevel() string {
 	return c.LogLevel
+}
+
+func (c sftpExporterConfig) GetSFTPHost() string {
+	return c.SFTPConfig.Host
+}
+
+func (c sftpExporterConfig) GetSFTPPort() int {
+	return c.SFTPConfig.Port
+}
+
+func (c sftpExporterConfig) GetSFTPUser() string {
+	return c.SFTPConfig.User
+}
+
+func (c sftpExporterConfig) GetSFTPPass() string {
+	return c.SFTPConfig.Pass
 }

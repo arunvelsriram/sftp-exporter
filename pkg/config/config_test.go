@@ -21,7 +21,7 @@ func TestNewConfig(t *testing.T) {
 	expected := sftpExporterConfig{
 		BindAddress: "127.0.0.1",
 		Port:        8080,
-		SFTPConfig: SFTPConfig{
+		SFTPConfig: sftpConfig{
 			Host: "localhost",
 			Port: 22,
 			User: "arun",
