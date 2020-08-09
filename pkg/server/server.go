@@ -15,12 +15,17 @@ func Start(cfg config.Config) error {
 	prometheus.MustRegister(sftpCollector)
 
 	r := http.NewServeMux()
-	r.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "healthy")
-	})
-	r.Handle("/metrics", promhttp.Handler())
+	r.Handle("/healthz", WithLogging(healthzHandler()))
+	r.Handle("/metrics", WithLogging(promhttp.Handler()))
 
 	addr := fmt.Sprintf("%s:%d", cfg.GetBindAddress(), cfg.GetPort())
 	log.Infof("will be listening on: %s", addr)
 	return http.ListenAndServe(addr, r)
+}
+
+func healthzHandler() http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		_, _ = fmt.Fprintf(w, "healthy")
+	}
+	return http.HandlerFunc(fn)
 }
