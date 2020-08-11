@@ -2,13 +2,15 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	c "github.com/arunvelsriram/sftp-exporter/pkg/constants"
 	"github.com/arunvelsriram/sftp-exporter/pkg/server"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 var cfg config.Config
@@ -59,13 +61,29 @@ func init() {
 	rootCmd.PersistentFlags().String(c.FlagSFTPUser, "", "sftp user")
 	_ = viper.BindPFlag(c.ViperKeySFTPUser, rootCmd.PersistentFlags().Lookup(c.FlagSFTPUser))
 
-	rootCmd.PersistentFlags().String(c.FlagSFTPPass, "", "sftp user")
+	rootCmd.PersistentFlags().String(c.FlagSFTPPass, "", "sftp password")
 	_ = viper.BindPFlag(c.ViperKeySFTPPass, rootCmd.PersistentFlags().Lookup(c.FlagSFTPPass))
+
+	rootCmd.PersistentFlags().String(c.FlagSFTPKey, "", "sftp key (base64 encoded)")
+	_ = viper.BindPFlag(c.ViperKeySFTPKey, rootCmd.PersistentFlags().Lookup(c.FlagSFTPKey))
+
+	rootCmd.PersistentFlags().String(c.FlagSFTPKeyFile, "", "sftp key file")
+	_ = viper.BindPFlag(c.ViperKeySFTPKeyFile, rootCmd.PersistentFlags().Lookup(c.FlagSFTPKeyFile))
+
+	rootCmd.PersistentFlags().String(c.FlagSFTPKeyPassphrase, "", "sftp key passphrase")
+	_ = viper.BindPFlag(c.ViperKeySFTPKeyPassphrase, rootCmd.PersistentFlags().Lookup(c.FlagSFTPKeyPassphrase))
 }
 
 func initConfig() {
 	viper.AutomaticEnv()
-	cfg = config.LoadConfig()
+
+	var err error
+	fs := afero.NewOsFs()
+	cfg, err = config.LoadConfig(fs)
+	if err != nil {
+		panic(err)
+	}
+
 	log.SetFormatter(&log.TextFormatter{
 		FullTimestamp: true,
 	})

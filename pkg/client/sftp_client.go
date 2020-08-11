@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
