@@ -2,13 +2,14 @@ package server
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/arunvelsriram/sftp-exporter/pkg/client"
 	"github.com/arunvelsriram/sftp-exporter/pkg/collector"
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func Start(cfg config.Config) error {
@@ -27,6 +28,7 @@ func Start(cfg config.Config) error {
 
 func healthzHandler() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
 		_, _ = fmt.Fprintf(w, "healthy")
 	}
 	return http.HandlerFunc(fn)
