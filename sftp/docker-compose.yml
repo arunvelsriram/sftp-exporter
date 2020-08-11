@@ -1,0 +1,31 @@
+version: "3.3"
+
+services:
+  sftp-basic:
+    container_name: sftp-basic
+    hostname: sftp-basic
+    image: atmoz/sftp
+    ports:
+      - "2220:22"
+    command: foo:pass:::upload
+  sftp-key:
+    container_name: sftp-key
+    hostname: sftp-key
+    image: atmoz/sftp
+    ports:
+      - "2221:22"
+    command: foo::::upload
+    volumes:
+      - "$PWD/ssh/key_without_passphrase.pub:/home/foo/.ssh/keys/key_without_passphrase.pub"
+      - "$PWD/ssh/key_with_passphrase.pub:/home/foo/.ssh/keys/key_with_passphrase.pub"
+  sftp-basic-and-key:
+    container_name: sftp-basic-and-key
+    hostname: sftp-basic-and-key
+    image: atmoz/sftp
+    ports:
+      - "2222:22"
+    command: foo:pass:::upload
+    volumes:
+      - "$PWD/ssh/key_without_passphrase.pub:/home/foo/.ssh/keys/key_without_passphrase.pub"
+      - "$PWD/ssh/key_with_passphrase.pub:/home/foo/.ssh/keys/key_with_passphrase.pub"
+      - "$PWD/ssh/sshd_config:/etc/ssh/sshd_config"
