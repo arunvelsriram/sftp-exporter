@@ -30,6 +30,20 @@ var (
 		[]string{"path"},
 		nil,
 	)
+
+	objectCount = prometheus.NewDesc(
+		prometheus.BuildFQName(c.Namespace, "", "objects_count_total"),
+		"Total number of objects in the path",
+		[]string{"path"},
+		nil,
+	)
+
+	objectSize = prometheus.NewDesc(
+		prometheus.BuildFQName(c.Namespace, "", "objects_size_total"),
+		"Total size of all objects in the path",
+		[]string{"path"},
+		nil,
+	)
 )
 
 type SFTPCollector struct {
@@ -40,6 +54,8 @@ func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- up
 	ch <- fsTotalSpace
 	ch <- fsFreeSpace
+	ch <- objectCount
+	ch <- objectSize
 }
 
 func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
