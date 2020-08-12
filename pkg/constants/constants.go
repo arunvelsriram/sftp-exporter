@@ -11,6 +11,7 @@ const (
 	ViperKeySFTPKey           = "sftp_key"
 	ViperKeySFTPKeyFile       = "sftp_key_file"
 	ViperKeySFTPKeyPassphrase = "sftp_key_passphrase"
+	ViperKeySFTPPaths         = "sftp_paths"
 )
 
 const (
@@ -24,6 +25,7 @@ const (
 	FlagSFTPKey           = "sftp-key"
 	FlagSFTPKeyFile       = "sftp-key-file"
 	FlagSFTPKeyPassphrase = "sftp-key-passphrase"
+	FlagSFTPPaths         = "sftp-paths"
 )
 
 const Namespace = "sftp"

@@ -20,14 +20,14 @@ var (
 	fsTotalSpace = prometheus.NewDesc(
 		prometheus.BuildFQName(c.Namespace, "", "filesystem_total_space_bytes"),
 		"Total space in the filesystem containing the path",
-		[]string{},
+		[]string{"path"},
 		nil,
 	)
 
 	fsFreeSpace = prometheus.NewDesc(
 		prometheus.BuildFQName(c.Namespace, "", "filesystem_free_space_bytes"),
 		"Free space in the filesystem containing the path",
-		[]string{},
+		[]string{"path"},
 		nil,
 	)
 )
@@ -52,13 +52,15 @@ func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
 	defer sftpClient.Close()
 	ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 1)
 
-	fsStat, err := sftpClient.FSStat()
+	stats, err := sftpClient.FSStat()
 	if err != nil {
-		log.WithFields(log.Fields{"event": "getting FS stat"}).Error(err)
+		log.WithFields(log.Fields{"event": "getting FS stats"}).Error(err)
 		return
 	}
-	ch <- prometheus.MustNewConstMetric(fsTotalSpace, prometheus.GaugeValue, fsStat.TotalSpace)
-	ch <- prometheus.MustNewConstMetric(fsFreeSpace, prometheus.GaugeValue, fsStat.FreeSpace)
+	for _, stat := range stats {
+		ch <- prometheus.MustNewConstMetric(fsTotalSpace, prometheus.GaugeValue, stat.TotalSpace, stat.Path)
+		ch <- prometheus.MustNewConstMetric(fsFreeSpace, prometheus.GaugeValue, stat.FreeSpace, stat.Path)
+	}
 }
 
 func NewSFTPCollector(cfg config.Config) prometheus.Collector {

@@ -16,7 +16,7 @@ import (
 type (
 	SFTPClient interface {
 		Close()
-		FSStat() (*model.FSStat, error)
+		FSStat() (model.FSStats, error)
 	}
 
 	defaultSFTPClient struct {
@@ -39,16 +39,21 @@ func (d defaultSFTPClient) Close() {
 	}
 }
 
-func (d defaultSFTPClient) FSStat() (*model.FSStat, error) {
-	statVFS, err := d.sftpClient.StatVFS("/upload")
-	if err != nil {
-		return nil, err
+func (d defaultSFTPClient) FSStat() (model.FSStats, error) {
+	paths := d.config.GetSFTPPaths()
+	fsStats := make([]model.FSStat, len(paths))
+	for i, path := range paths {
+		statVFS, err := d.sftpClient.StatVFS(path)
+		if err != nil {
+			return nil, err
+		}
+		fsStats[i] = model.FSStat{
+			Path:       path,
+			TotalSpace: float64(statVFS.TotalSpace()),
+			FreeSpace:  float64(statVFS.FreeSpace()),
+		}
 	}
-
-	return &model.FSStat{
-		TotalSpace: float64(statVFS.TotalSpace()),
-		FreeSpace:  float64(statVFS.FreeSpace()),
-	}, nil
+	return model.FSStats(fsStats), nil
 }
 
 func ParsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error) {

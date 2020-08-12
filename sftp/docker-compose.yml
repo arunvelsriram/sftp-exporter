@@ -7,14 +7,14 @@ services:
     image: atmoz/sftp
     ports:
       - "2220:22"
-    command: foo:pass:::upload
+    command: foo:pass:::upload1,upload2
   sftp-key:
     container_name: sftp-key
     hostname: sftp-key
     image: atmoz/sftp
     ports:
       - "2221:22"
-    command: foo::::upload
+    command: foo::::upload1,upload2
     volumes:
       - "$PWD/ssh/key_without_passphrase.pub:/home/foo/.ssh/keys/key_without_passphrase.pub"
       - "$PWD/ssh/key_with_passphrase.pub:/home/foo/.ssh/keys/key_with_passphrase.pub"
@@ -24,7 +24,7 @@ services:
     image: atmoz/sftp
     ports:
       - "2222:22"
-    command: foo:pass:::upload
+    command: foo:pass:::upload1,upload2
     volumes:
       - "$PWD/ssh/key_without_passphrase.pub:/home/foo/.ssh/keys/key_without_passphrase.pub"
       - "$PWD/ssh/key_with_passphrase.pub:/home/foo/.ssh/keys/key_with_passphrase.pub"

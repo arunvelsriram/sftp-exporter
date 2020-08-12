@@ -18,6 +18,7 @@ type sftpConfig struct {
 	Key           []byte
 	KeyFile       string
 	KeyPassphrase string
+	Paths         []string
 }
 
 type Config interface {
@@ -31,6 +32,7 @@ type Config interface {
 	GetSFTPKey() []byte
 	GetSFTPKeyFile() string
 	GetSFTPKeyPassphrase() []byte
+	GetSFTPPaths() []string
 }
 
 type sftpExporterConfig struct {
@@ -100,6 +102,7 @@ func MustLoadConfig(fs afero.Fs) Config {
 			Key:           key,
 			KeyFile:       keyFile,
 			KeyPassphrase: viper.GetString(c.ViperKeySFTPKeyPassphrase),
+			Paths:         viper.GetStringSlice(c.ViperKeySFTPPaths),
 		},
 	}
 }
@@ -142,4 +145,8 @@ func (c sftpExporterConfig) GetSFTPKeyFile() string {
 
 func (c sftpExporterConfig) GetSFTPKeyPassphrase() []byte {
 	return []byte(c.SFTPConfig.KeyPassphrase)
+}
+
+func (c sftpExporterConfig) GetSFTPPaths() []string {
+	return c.SFTPConfig.Paths
 }

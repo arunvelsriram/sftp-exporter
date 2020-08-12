@@ -21,6 +21,7 @@ var rootCmd = &cobra.Command{
 	Short: "",
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(cfg.GetSFTPPaths())
 		log.Debugf("config dump: %+v\n", cfg)
 		if err := server.Start(cfg); err != nil {
 			log.WithFields(log.Fields{"event": "starting server"}).Fatal(err)
@@ -75,6 +76,9 @@ func init() {
 
 	rootCmd.PersistentFlags().String(c.FlagSFTPKeyPassphrase, "", "sftp key passphrase")
 	_ = viper.BindPFlag(c.ViperKeySFTPKeyPassphrase, rootCmd.PersistentFlags().Lookup(c.FlagSFTPKeyPassphrase))
+
+	rootCmd.PersistentFlags().StringSlice(c.FlagSFTPPaths, []string{"/"}, "sftp paths")
+	_ = viper.BindPFlag(c.ViperKeySFTPPaths, rootCmd.PersistentFlags().Lookup(c.FlagSFTPPaths))
 }
 
 func initConfig() {
