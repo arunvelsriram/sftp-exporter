@@ -68,14 +68,24 @@ func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
 	defer sftpClient.Close()
 	ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 1)
 
-	stats, err := sftpClient.FSStat()
+	fsStats, err := sftpClient.FSStat()
 	if err != nil {
 		log.WithFields(log.Fields{"event": "getting FS stats"}).Error(err)
 		return
 	}
-	for _, stat := range stats {
+	for _, stat := range fsStats {
 		ch <- prometheus.MustNewConstMetric(fsTotalSpace, prometheus.GaugeValue, stat.TotalSpace, stat.Path)
 		ch <- prometheus.MustNewConstMetric(fsFreeSpace, prometheus.GaugeValue, stat.FreeSpace, stat.Path)
+	}
+
+	objectStats, err := sftpClient.ObjectStats()
+	if err != nil {
+		log.WithFields(log.Fields{"event": "getting object stats"}).Error(err)
+		return
+	}
+	for _, stat := range objectStats {
+		ch <- prometheus.MustNewConstMetric(objectCount, prometheus.GaugeValue, stat.ObjectCount, stat.Path)
+		ch <- prometheus.MustNewConstMetric(objectSize, prometheus.GaugeValue, stat.ObjectSize, stat.Path)
 	}
 }
 

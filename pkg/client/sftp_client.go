@@ -17,6 +17,7 @@ type (
 	SFTPClient interface {
 		Close()
 		FSStat() (model.FSStats, error)
+		ObjectStats() (model.ObjectStats, error)
 	}
 
 	defaultSFTPClient struct {
@@ -54,6 +55,39 @@ func (d defaultSFTPClient) FSStat() (model.FSStats, error) {
 		}
 	}
 	return model.FSStats(fsStats), nil
+}
+
+func (d defaultSFTPClient) ObjectStats() (model.ObjectStats, error) {
+	paths := d.config.GetSFTPPaths()
+	objectStats := make([]model.ObjectStat, len(paths))
+	for i, path := range paths {
+		walker := d.sftpClient.Walk(path)
+		var size int64
+		count := 0
+		for walker.Step() {
+			if err := walker.Err(); err != nil {
+				log.WithFields(log.Fields{
+					"event": "collecting object stats",
+					"path":  path,
+				}).Error(err)
+				continue
+			}
+
+			if walker.Stat().IsDir() {
+				continue
+			}
+			size += walker.Stat().Size()
+			count++
+		}
+
+		objectStats[i] = model.ObjectStat{
+			Path:        path,
+			ObjectCount: float64(count),
+			ObjectSize:  float64(size),
+		}
+	}
+
+	return model.ObjectStats(objectStats), nil
 }
 
 func ParsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error) {
