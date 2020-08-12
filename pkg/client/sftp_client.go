@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+
 	"github.com/arunvelsriram/sftp-exporter/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
@@ -50,7 +51,7 @@ func (d defaultSFTPClient) FSStat() (*model.FSStat, error) {
 	}, nil
 }
 
-func parsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error) {
+func ParsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error) {
 	if len(keyPassphrase) > 0 {
 		log.Debug("key has passphrase")
 		parsedKey, err = ssh.ParsePrivateKeyWithPassphrase(key, keyPassphrase)
@@ -70,14 +71,10 @@ func parsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error
 	return parsedKey, err
 }
 
-func sshAuthMethods(cfg config.Config) ([]ssh.AuthMethod, error) {
-	pass := cfg.GetSFTPPass()
-	key := cfg.GetSFTPKey()
-	keyPassphrase := cfg.GetSFTPKeyPassphrase()
-
+func SSHAuthMethods(pass string, key, keyPassphrase []byte) ([]ssh.AuthMethod, error) {
 	if len(key) > 0 && utils.IsNotEmpty(pass) {
 		log.Debug("will be authenticating using key and password")
-		parsedKey, err := parsePrivateKey(key, keyPassphrase)
+		parsedKey, err := ParsePrivateKey(key, keyPassphrase)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +84,7 @@ func sshAuthMethods(cfg config.Config) ([]ssh.AuthMethod, error) {
 		}, nil
 	} else if len(key) > 0 {
 		log.Debug("will be authenticating using key")
-		parsedKey, err := parsePrivateKey(key, keyPassphrase)
+		parsedKey, err := ParsePrivateKey(key, keyPassphrase)
 		if err != nil {
 			return nil, err
 		}
@@ -104,9 +101,9 @@ func sshAuthMethods(cfg config.Config) ([]ssh.AuthMethod, error) {
 	return nil, fmt.Errorf("either one of password or key is required")
 }
 
-func newSFTPClient(cfg config.Config) (SFTPClient, error) {
+func NewSFTPClient(cfg config.Config) (SFTPClient, error) {
 	addr := fmt.Sprintf("%s:%d", cfg.GetSFTPHost(), cfg.GetSFTPPort())
-	auth, err := sshAuthMethods(cfg)
+	auth, err := SSHAuthMethods(cfg.GetSFTPPass(), cfg.GetSFTPKey(), cfg.GetSFTPKeyPassphrase())
 	if err != nil {
 		log.Error("unable to get SSH auth methods")
 		return nil, err

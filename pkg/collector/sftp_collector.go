@@ -33,8 +33,7 @@ var (
 )
 
 type SFTPCollector struct {
-	config        config.Config
-	clientFactory client.Factory
+	config config.Config
 }
 
 func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
@@ -44,7 +43,7 @@ func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
-	sftpClient, err := s.clientFactory.SFTPClient()
+	sftpClient, err := client.NewSFTPClient(s.config)
 	if err != nil {
 		ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 0)
 		log.WithFields(log.Fields{"event": "creating SFTP sftpClient"}).Error(err)
@@ -62,9 +61,6 @@ func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(fsFreeSpace, prometheus.GaugeValue, fsStat.FreeSpace)
 }
 
-func NewSFTPCollector(cfg config.Config, f client.Factory) prometheus.Collector {
-	return SFTPCollector{
-		config:        cfg,
-		clientFactory: f,
-	}
+func NewSFTPCollector(cfg config.Config) prometheus.Collector {
+	return SFTPCollector{config: cfg}
 }
