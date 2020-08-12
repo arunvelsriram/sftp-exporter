@@ -68,7 +68,7 @@ func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
 	defer sftpClient.Close()
 	ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 1)
 
-	fsStats, err := sftpClient.FSStat()
+	fsStats, err := sftpClient.FSStats()
 	if err != nil {
 		log.WithFields(log.Fields{"event": "getting FS stats"}).Error(err)
 		return

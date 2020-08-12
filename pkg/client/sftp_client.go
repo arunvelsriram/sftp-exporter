@@ -16,7 +16,7 @@ import (
 type (
 	SFTPClient interface {
 		Close()
-		FSStat() (model.FSStats, error)
+		FSStats() (model.FSStats, error)
 		ObjectStats() (model.ObjectStats, error)
 	}
 
@@ -40,7 +40,7 @@ func (d defaultSFTPClient) Close() {
 	}
 }
 
-func (d defaultSFTPClient) FSStat() (model.FSStats, error) {
+func (d defaultSFTPClient) FSStats() (model.FSStats, error) {
 	paths := d.config.GetSFTPPaths()
 	fsStats := make([]model.FSStat, len(paths))
 	for i, path := range paths {
