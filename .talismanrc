@@ -1,11 +1,3 @@
 fileignoreconfig:
-- filename: sftp/ssh/key_without_passphrase.pub
-  checksum: 50e2a352407045a8ae28b9b53f2412d393f5697254dd1d3f26e41050f8186f23
-- filename: sftp/ssh/key_with_passphrase.pub
-  checksum: 39a2a36d4416dfb4df9f479d106d83fa45a12026140e945f1e279be5a983e4d7
-- filename: sftp/ssh/key_without_passphrase
-  checksum: 46831ea158a93518214983659d2d0991d9ca6da76f9e5428b749ce0fde031bde
-- filename: sftp/ssh/key_with_passphrase
-  checksum: 6714cc1a10ad23ebc8b65290ac93e9996664ae4e1416094c57da90f32d75cf8d
-- filename: sftp/docker-compose.yml
-  checksum: a320313a0715a649b1bf4c8db3e4cf45c2cdc9d5cbab154a4252b1d33ed8063c
+- filename: pkg/config/config.go
+  checksum: 3d4547bb16555a9afb9277fa6d475c97f295d69b2eb9f000c9d89501f90f8c8c

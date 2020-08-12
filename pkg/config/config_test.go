@@ -1,8 +1,9 @@
-package config
+package config_test
 
 import (
 	"testing"
 
+	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	c "github.com/arunvelsriram/sftp-exporter/pkg/constants"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
@@ -22,62 +23,67 @@ func (s *ConfigTestSuite) SetupTest() {
 	s.fs = afero.NewMemMapFs()
 }
 
+func (s *ConfigTestSuite) TearDownTest() {
+	viper.Reset()
+}
+
 func (s *ConfigTestSuite) TestConfigLoadConfig() {
-	s.Run("should return config", func() {
-		actual, err := LoadConfig(s.fs)
+	viper.Set(c.ViperKeySFTPUser, "sftp user")
+	viper.Set(c.ViperKeySFTPPass, "sftp pass")
+	actual := config.MustLoadConfig(s.fs)
 
-		s.NoError(err)
-		s.Equal(sftpExporterConfig{}, actual)
-	})
+	s.Equal("sftp user", actual.GetSFTPUser())
+	s.Equal("sftp pass", actual.GetSFTPPass())
+}
 
-	s.Run("should return err when both key and keyfile are provided", func() {
-		viper.Reset()
-		viper.Set(c.ViperKeySFTPKey, "sftp private key")
-		viper.Set(c.ViperKeySFTPKeyFile, "sftp private keyfile")
+func (s *ConfigTestSuite) TestConfigLoadConfigPanicsIfSFTPEmptyUser() {
+	s.PanicsWithValue("config sftp_user is required", func() { config.MustLoadConfig(s.fs) })
+}
 
-		_, err := LoadConfig(s.fs)
+func (s *ConfigTestSuite) TestConfigLoadConfigPanicsWhenBothAllAuthTypesAreEmpty() {
+	viper.Set(c.ViperKeySFTPUser, "sftp user")
 
-		s.EqualError(err, "only one of key or keyfile should be specified")
-	})
+	s.PanicsWithValue("either one of sftp_pass, sftp_key, sftp_key_file is required", func() { config.MustLoadConfig(s.fs) })
+}
 
-	s.Run("should return error if key is not encoded properly", func() {
-		viper.Reset()
-		viper.Set(c.ViperKeySFTPKey, "invalid encoding")
+func (s *ConfigTestSuite) TestConfigLoadConfigPanicsWhenBothKeyAndKeyFileAreGiven() {
+	viper.Set(c.ViperKeySFTPUser, "sftp user")
+	viper.Set(c.ViperKeySFTPKey, "sftp private key")
+	viper.Set(c.ViperKeySFTPKeyFile, "sftp private keyfile")
 
-		_, err := LoadConfig(s.fs)
+	s.PanicsWithValue("only one of sftp_key, sftp_key_file should be provided", func() { config.MustLoadConfig(s.fs) })
+}
+func (s *ConfigTestSuite) TestConfigLoadConfigPanicsForInvalidKey() {
+	viper.Set(c.ViperKeySFTPUser, "sftp user")
+	viper.Set(c.ViperKeySFTPKey, "invalid encoding")
 
-		s.EqualError(err, "illegal base64 data at input byte 7")
-	})
+	s.PanicsWithValue("illegal base64 data at input byte 7", func() { config.MustLoadConfig(s.fs) })
+}
 
-	s.Run("should store decoded key for given encoded key", func() {
-		viper.Reset()
-		viper.Set(c.ViperKeySFTPKey, "YXJ1bg==")
+func (s *ConfigTestSuite) TestConfigLoadConfigStoresDecodedKey() {
+	viper.Set(c.ViperKeySFTPUser, "sftp user")
+	viper.Set(c.ViperKeySFTPKey, "YXJ1bg==")
 
-		actual, err := LoadConfig(s.fs)
+	actual := config.MustLoadConfig(s.fs)
 
-		s.NoError(err)
-		s.Equal([]byte("arun"), actual.GetSFTPKey())
-	})
+	s.Equal([]byte("arun"), actual.GetSFTPKey())
+}
 
-	s.Run("should return error if reading keyfile fails", func() {
-		viper.Reset()
-		viper.Set(c.ViperKeySFTPKeyFile, "invalidfile")
+func (s *ConfigTestSuite) TestConfigLoadConfigPanicsIfReadingKeyFileFails() {
+	viper.Set(c.ViperKeySFTPUser, "sftp user")
+	viper.Set(c.ViperKeySFTPKeyFile, "invalidfile")
 
-		_, err := LoadConfig(s.fs)
+	s.PanicsWithValue("open invalidfile: file does not exist", func() { config.MustLoadConfig(s.fs) })
+}
 
-		s.EqualError(err, "open invalidfile: file does not exist")
-	})
+func (s *ConfigTestSuite) TestConfigLoadConfigStoresKeyForValidKeyFile() {
+	file, _ := afero.TempFile(s.fs, "", "config-test")
+	_, _ = file.WriteString("private key")
+	viper.Set(c.ViperKeySFTPUser, "sftp user")
+	viper.Set(c.ViperKeySFTPKeyFile, file.Name())
 
-	s.Run("should store key and keyfile for a valid keyfile", func() {
-		file, _ := afero.TempFile(s.fs, "", "config-test")
-		_, _ = file.WriteString("private key")
-		viper.Reset()
-		viper.Set(c.ViperKeySFTPKeyFile, file.Name())
+	actual := config.MustLoadConfig(s.fs)
 
-		actual, err := LoadConfig(s.fs)
-
-		s.NoError(err)
-		s.Equal(file.Name(), actual.GetSFTPKeyFile())
-		s.Equal([]byte("private key"), actual.GetSFTPKey())
-	})
+	s.Equal(file.Name(), actual.GetSFTPKeyFile())
+	s.Equal([]byte("private key"), actual.GetSFTPKey())
 }

@@ -30,7 +30,7 @@ type Config interface {
 	GetSFTPPass() string
 	GetSFTPKey() []byte
 	GetSFTPKeyFile() string
-	GetSFTPKeyPassphrase() string
+	GetSFTPKeyPassphrase() []byte
 }
 
 type sftpExporterConfig struct {
@@ -40,32 +40,53 @@ type sftpExporterConfig struct {
 	SFTPConfig  sftpConfig
 }
 
-func resolveKey(encodedKey, keyfile string, fs afero.Fs) (sftpKey []byte, err error) {
-	if utils.IsNotEmpty(encodedKey) && utils.IsNotEmpty(keyfile) {
-		return sftpKey, fmt.Errorf("only one of key or keyfile should be specified")
-	}
+func mustResolveKey(encodedKey, keyFile string, fs afero.Fs) []byte {
+	mustValidateKeySource(encodedKey, keyFile)
 
+	var sftpKey []byte
+	var err error
 	if utils.IsNotEmpty(encodedKey) {
 		sftpKey, err = base64.StdEncoding.DecodeString(encodedKey)
-		if err != nil {
-			return sftpKey, err
-		}
-	} else if utils.IsNotEmpty(keyfile) {
-		sftpKey, err = afero.ReadFile(fs, keyfile)
-		if err != nil {
-			return sftpKey, err
-		}
+		utils.PanicIfErr(err)
+	} else if utils.IsNotEmpty(keyFile) {
+		sftpKey, err = afero.ReadFile(fs, keyFile)
+		utils.PanicIfErr(err)
 	}
-	return sftpKey, nil
+	return sftpKey
 }
 
-func LoadConfig(fs afero.Fs) (Config, error) {
+func mustGetString(k string) string {
+	v := viper.GetString(k)
+	if utils.IsEmpty(v) {
+		errMsg := fmt.Sprintf("config %s is required", k)
+		panic(errMsg)
+	}
+	return v
+}
+
+func mustValidateKeySource(key, keyFile string) {
+	if utils.IsNotEmpty(key) && utils.IsNotEmpty(keyFile) {
+		errMsg := fmt.Sprintf("only one of %s, %s should be provided", c.ViperKeySFTPKey, c.ViperKeySFTPKeyFile)
+		panic(errMsg)
+	}
+}
+
+func mustValidateAuthTypes(pass, key, keyFile string) {
+	if utils.IsEmpty(pass) && utils.IsEmpty(key) && utils.IsEmpty(keyFile) {
+		errMsg := fmt.Sprintf("either one of %s, %s, %s is required", c.ViperKeySFTPPass, c.ViperKeySFTPKey, c.ViperKeySFTPKeyFile)
+		panic(errMsg)
+	}
+}
+
+func MustLoadConfig(fs afero.Fs) Config {
+	user := mustGetString(c.ViperKeySFTPUser)
+
+	pass := viper.GetString(c.ViperKeySFTPPass)
 	encodedKey := viper.GetString(c.ViperKeySFTPKey)
 	keyFile := viper.GetString(c.ViperKeySFTPKeyFile)
-	key, err := resolveKey(encodedKey, keyFile, fs)
-	if err != nil {
-		return nil, err
-	}
+	mustValidateAuthTypes(pass, encodedKey, keyFile)
+
+	key := mustResolveKey(encodedKey, keyFile, fs)
 
 	return sftpExporterConfig{
 		BindAddress: viper.GetString(c.ViperKeyBindAddress),
@@ -74,13 +95,13 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 		SFTPConfig: sftpConfig{
 			Host:          viper.GetString(c.ViperKeySFTPHost),
 			Port:          viper.GetInt(c.ViperKeySFTPPort),
-			User:          viper.GetString(c.ViperKeySFTPUser),
-			Pass:          viper.GetString(c.ViperKeySFTPPass),
+			User:          user,
+			Pass:          pass,
 			Key:           key,
 			KeyFile:       keyFile,
 			KeyPassphrase: viper.GetString(c.ViperKeySFTPKeyPassphrase),
 		},
-	}, nil
+	}
 }
 
 func (c sftpExporterConfig) GetBindAddress() string {
@@ -119,6 +140,6 @@ func (c sftpExporterConfig) GetSFTPKeyFile() string {
 	return c.SFTPConfig.KeyFile
 }
 
-func (c sftpExporterConfig) GetSFTPKeyPassphrase() string {
-	return c.SFTPConfig.KeyPassphrase
+func (c sftpExporterConfig) GetSFTPKeyPassphrase() []byte {
+	return []byte(c.SFTPConfig.KeyPassphrase)
 }

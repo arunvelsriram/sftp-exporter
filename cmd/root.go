@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
@@ -28,7 +29,8 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.WithFields(log.Fields{"event": "executing command"}).Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
 
@@ -79,10 +81,7 @@ func initConfig() {
 
 	var err error
 	fs := afero.NewOsFs()
-	cfg, err = config.LoadConfig(fs)
-	if err != nil {
-		panic(err)
-	}
+	cfg = config.MustLoadConfig(fs)
 
 	log.SetFormatter(&log.TextFormatter{
 		FullTimestamp: true,
