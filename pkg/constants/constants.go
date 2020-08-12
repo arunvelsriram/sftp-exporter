@@ -18,6 +18,7 @@ const (
 	FlagBindAddress       = "bind-address"
 	FlagPort              = "port"
 	FlagLogLevel          = "log-level"
+	FlagConfigFile        = "config-file"
 	FlagSFTPHost          = "sftp-host"
 	FlagSFTPPort          = "sftp-port"
 	FlagSFTPUser          = "sftp-user"

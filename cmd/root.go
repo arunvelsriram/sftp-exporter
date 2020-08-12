@@ -15,13 +15,13 @@ import (
 )
 
 var cfg config.Config
+var cfgFile string
 
 var rootCmd = &cobra.Command{
 	Use:   "sftp-exporter",
 	Short: "",
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(cfg.GetSFTPPaths())
 		log.Debugf("config dump: %+v\n", cfg)
 		if err := server.Start(cfg); err != nil {
 			log.WithFields(log.Fields{"event": "starting server"}).Fatal(err)
@@ -56,6 +56,8 @@ func init() {
 	)
 	_ = viper.BindPFlag(c.ViperKeyLogLevel, rootCmd.PersistentFlags().Lookup(c.FlagLogLevel))
 
+	rootCmd.PersistentFlags().StringVar(&cfgFile, c.FlagConfigFile, "sftp-exporter.yaml", "exporter config file")
+
 	rootCmd.PersistentFlags().String(c.FlagSFTPHost, "localhost", "sftp host")
 	_ = viper.BindPFlag(c.ViperKeySFTPHost, rootCmd.PersistentFlags().Lookup(c.FlagSFTPHost))
 
@@ -82,15 +84,21 @@ func init() {
 }
 
 func initConfig() {
-	viper.AutomaticEnv()
-
-	var err error
-	fs := afero.NewOsFs()
-	cfg = config.MustLoadConfig(fs)
-
 	log.SetFormatter(&log.TextFormatter{
 		FullTimestamp: true,
 	})
+
+	viper.SetConfigFile(cfgFile)
+	viper.AutomaticEnv()
+	if err := viper.ReadInConfig(); err != nil {
+		log.WithField("event", "reading config file").Warn(err)
+	} else {
+		log.WithField("event", "reading config file").Infof("config file used: %s", viper.ConfigFileUsed())
+	}
+
+	fs := afero.NewOsFs()
+	cfg = config.MustLoadConfig(fs)
+
 	level, err := log.ParseLevel(cfg.GetLogLevel())
 	if err != nil {
 		panic(err)
