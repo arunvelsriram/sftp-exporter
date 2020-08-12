@@ -1,3 +1,11 @@
 fileignoreconfig:
-- filename: pkg/config/config.go
-  checksum: 3d4547bb16555a9afb9277fa6d475c97f295d69b2eb9f000c9d89501f90f8c8c
+- filename: sftp/ssh/key_with_passphrase.pub
+  checksum: f54d3e10f89dcec5c69bba33c5bbadff2b0241306af8ce37f7b5695080ccdea2
+- filename: sftp/ssh/key_without_passphrase.pub
+  checksum: 2ec64dcc1725d82c1b1bce8a9769dd6effcb785ceb6682471d9f30d932abf64f
+- filename: sftp/ssh/key_without_passphrase
+  checksum: 2e5bc6583ffed56355367c75bc533e57ceb19e31d1ecc44516189074e55a5142
+- filename: sftp/ssh/key_with_passphrase
+  checksum: f59431b0b023ff7e9b85830121e8869da1fc5780d809ecfb0a28843239cac578
+- filename: pkg/client/sftp_client.go
+  checksum: 0100aeebda7fff385ed63faf81eebbcc958433d0474e299dc31bf11eb66a1905

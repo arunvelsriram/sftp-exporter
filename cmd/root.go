@@ -21,6 +21,7 @@ var rootCmd = &cobra.Command{
 	Short: "",
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
+		log.Debugf("config dump: %+v\n", cfg)
 		if err := server.Start(cfg); err != nil {
 			log.WithFields(log.Fields{"event": "starting server"}).Fatal(err)
 		}

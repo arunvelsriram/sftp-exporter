@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"github.com/arunvelsriram/sftp-exporter/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 
@@ -49,13 +50,70 @@ func (d defaultSFTPClient) FSStat() (*model.FSStat, error) {
 	}, nil
 }
 
+func parsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error) {
+	if len(keyPassphrase) > 0 {
+		log.Debug("key has passphrase")
+		parsedKey, err = ssh.ParsePrivateKeyWithPassphrase(key, keyPassphrase)
+		if err != nil {
+			log.Error("failed to parse key with passphrase")
+			return nil, err
+		}
+		return parsedKey, err
+	}
+
+	log.Debug("key has no passphrase")
+	parsedKey, err = ssh.ParsePrivateKey(key)
+	if err != nil {
+		log.Error("failed to parse key")
+		return nil, err
+	}
+	return parsedKey, err
+}
+
+func sshAuthMethods(cfg config.Config) ([]ssh.AuthMethod, error) {
+	pass := cfg.GetSFTPPass()
+	key := cfg.GetSFTPKey()
+	keyPassphrase := cfg.GetSFTPKeyPassphrase()
+
+	if len(key) > 0 && utils.IsNotEmpty(pass) {
+		log.Debug("will be authenticating using key and password")
+		parsedKey, err := parsePrivateKey(key, keyPassphrase)
+		if err != nil {
+			return nil, err
+		}
+		return []ssh.AuthMethod{
+			ssh.PublicKeys(parsedKey),
+			ssh.Password(pass),
+		}, nil
+	} else if len(key) > 0 {
+		log.Debug("will be authenticating using key")
+		parsedKey, err := parsePrivateKey(key, keyPassphrase)
+		if err != nil {
+			return nil, err
+		}
+		return []ssh.AuthMethod{
+			ssh.PublicKeys(parsedKey),
+		}, nil
+	} else if utils.IsNotEmpty(pass) {
+		log.Debug("will be authenticating using password")
+		return []ssh.AuthMethod{
+			ssh.Password(pass),
+		}, nil
+	}
+
+	return nil, fmt.Errorf("either one of password or key is required")
+}
+
 func newSFTPClient(cfg config.Config) (SFTPClient, error) {
 	addr := fmt.Sprintf("%s:%d", cfg.GetSFTPHost(), cfg.GetSFTPPort())
+	auth, err := sshAuthMethods(cfg)
+	if err != nil {
+		log.Error("unable to get SSH auth methods")
+		return nil, err
+	}
 	clientConfig := &ssh.ClientConfig{
-		User: cfg.GetSFTPUser(),
-		Auth: []ssh.AuthMethod{
-			ssh.Password(cfg.GetSFTPPass()),
-		},
+		User:            cfg.GetSFTPUser(),
+		Auth:            auth,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 

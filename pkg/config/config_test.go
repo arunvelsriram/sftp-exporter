@@ -53,6 +53,7 @@ func (s *ConfigTestSuite) TestConfigLoadConfigPanicsWhenBothKeyAndKeyFileAreGive
 
 	s.PanicsWithValue("only one of sftp_key, sftp_key_file should be provided", func() { config.MustLoadConfig(s.fs) })
 }
+
 func (s *ConfigTestSuite) TestConfigLoadConfigPanicsForInvalidKey() {
 	viper.Set(c.ViperKeySFTPUser, "sftp user")
 	viper.Set(c.ViperKeySFTPKey, "invalid encoding")
