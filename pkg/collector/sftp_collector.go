@@ -39,7 +39,7 @@ var (
 	)
 
 	objectSize = prometheus.NewDesc(
-		prometheus.BuildFQName(c.Namespace, "", "objects_size_total"),
+		prometheus.BuildFQName(c.Namespace, "", "objects_size_total_bytes"),
 		"Total size of all objects in the path",
 		[]string{"path"},
 		nil,
