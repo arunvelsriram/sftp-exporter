@@ -29,9 +29,9 @@ services:
       - "$PWD/ssh/key_without_passphrase.pub:/home/foo/.ssh/keys/key_without_passphrase.pub"
       - "$PWD/ssh/key_with_passphrase.pub:/home/foo/.ssh/keys/key_with_passphrase.pub"
       - "$PWD/ssh/sshd_config:/etc/ssh/sshd_config"
-  sftp-exporter:
-    container_name: sftp-exporter
-    hostname: sftp-exporter
+  sftp-basic-exporter:
+    container_name: sftp-basic-exporter
+    hostname: sftp-basic-exporter
     build:
       context: ../
       dockerfile: ./Dockerfile
@@ -45,3 +45,17 @@ services:
       SFTP_USER: foo
       SFTP_PASS: password
       SFTP_PATHS: "/upload1 /upload2"
+  prometheus:
+    container_name: prometheus
+    hostname: prometheus
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - "$PWD/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+  grafana:
+    container_name: grafana
+    hostname: grafana
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
