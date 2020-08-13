@@ -1,4 +1,5 @@
 fileignoreconfig:
-- filename: sftp/docker-compose.yml
-  checksum: 63ab40efe2b198ebe8891ab80bf6374ca80b00afbee45c9344e493a801cffecd
-
+- filename: sftp-exporter.yaml
+  checksum: 36cefefdcece01bb6439991db558567ec47eeee9ab608f431e6133d861524442
+- filename: playground/docker-compose.yml
+  checksum: d96e2e59ec783a2703eeef78dfe7f5e258b85c1fce0be8d797378c70fa1ce338

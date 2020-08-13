@@ -7,7 +7,7 @@ services:
     image: atmoz/sftp
     ports:
       - "2220:22"
-    command: foo:pass:::upload1,upload2
+    command: foo:password:::upload1,upload2
   sftp-key:
     container_name: sftp-key
     hostname: sftp-key
@@ -24,8 +24,24 @@ services:
     image: atmoz/sftp
     ports:
       - "2222:22"
-    command: foo:pass:::upload1,upload2
+    command: foo:password:::upload1,upload2
     volumes:
       - "$PWD/ssh/key_without_passphrase.pub:/home/foo/.ssh/keys/key_without_passphrase.pub"
       - "$PWD/ssh/key_with_passphrase.pub:/home/foo/.ssh/keys/key_with_passphrase.pub"
       - "$PWD/ssh/sshd_config:/etc/ssh/sshd_config"
+  sftp-exporter:
+    container_name: sftp-exporter
+    hostname: sftp-exporter
+    build:
+      context: ../
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      BIND_ADDRESS: 0.0.0.0
+      LOG_LEVEL: debug
+      SFTP_HOST: sftp-basic
+      SFTP_PORT: 22
+      SFTP_USER: foo
+      SFTP_PASS: password
+      SFTP_PATHS: "/upload1 /upload2"

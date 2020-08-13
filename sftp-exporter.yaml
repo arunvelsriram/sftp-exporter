@@ -1,5 +1,5 @@
 sftp_host: 127.0.0.1
 sftp_port: 2220
 sftp_user: foo
-sftp_pass: pass
+sftp_pass: password
 sftp_paths: ["/upload1", "/upload2"]
