@@ -1,5 +1,6 @@
 fileignoreconfig:
-- filename: sftp-exporter.yaml
-  checksum: 36cefefdcece01bb6439991db558567ec47eeee9ab608f431e6133d861524442
-- filename: playground/docker-compose.yml
-  checksum: d96e2e59ec783a2703eeef78dfe7f5e258b85c1fce0be8d797378c70fa1ce338
+- filename: go.sum
+  checksum: 05c7b914f88d6678fb1966c9e609121b2b7e67aef028a6b05d9cc6b076a570f0
+- filename: pkg/internal/mocks/config.go
+  checksum: 82bb28fe2592454078a24a6b9302ecff8533c3650c7c147aacbba57eb37d3ec6
+

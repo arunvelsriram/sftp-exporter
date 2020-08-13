@@ -2,6 +2,7 @@
 
 APP=sftp-exporter
 GOLANGCI_LINT_VERSION=v1.30.0
+MOCKGEN_VERSION=v1.4.3
 
 ifeq ($(GOLANGCI_LINT),)
 	GOLANGCI_LINT=$(shell command -v $(PWD)/bin/golangci-lint 2> /dev/null)
@@ -35,3 +36,8 @@ run: ## run the app
 
 check: install-deps fmt lint test ## runs fmt, lint, test
 
+install-mockgen: ## install mockgen
+	go get github.com/golang/mock/mockgen@$(MOCKGEN_VERSION)
+
+mocks: install-mockgen ## generate mocks
+	go generate

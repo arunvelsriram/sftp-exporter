@@ -3,6 +3,7 @@ module github.com/arunvelsriram/sftp-exporter
 go 1.14
 
 require (
+	github.com/golang/mock v1.4.3 // indirect
 	github.com/pkg/sftp v1.11.0
 	github.com/prometheus/client_golang v0.9.3
 	github.com/sirupsen/logrus v1.2.0
