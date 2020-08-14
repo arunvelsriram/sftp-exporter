@@ -29,7 +29,9 @@ build: ## compile the app
 	go build -o ./bin/$(APP) main.go
 
 test: ## run unit tests
-	go test ./...
+	mkdir -p coverage
+	go test -coverprofile coverage/coverage.out ./...
+	go tool cover -html=coverage/coverage.out -o coverage/coverage.html
 
 run: ## run the app
 	go run main.go
