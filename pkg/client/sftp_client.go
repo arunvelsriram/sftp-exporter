@@ -54,7 +54,7 @@ func (d defaultSFTPClient) FSStats() (model.FSStats, error) {
 			FreeSpace:  float64(statVFS.FreeSpace()),
 		}
 	}
-	return model.FSStats(fsStats), nil
+	return fsStats, nil
 }
 
 func (d defaultSFTPClient) ObjectStats() (model.ObjectStats, error) {
@@ -87,7 +87,7 @@ func (d defaultSFTPClient) ObjectStats() (model.ObjectStats, error) {
 		}
 	}
 
-	return model.ObjectStats(objectStats), nil
+	return objectStats, nil
 }
 
 func ParsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error) {
