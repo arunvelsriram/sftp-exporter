@@ -90,59 +90,9 @@ func (d defaultSFTPClient) ObjectStats() (model.ObjectStats, error) {
 	return objectStats, nil
 }
 
-func ParsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error) {
-	if len(keyPassphrase) > 0 {
-		log.Debug("key has passphrase")
-		parsedKey, err = ssh.ParsePrivateKeyWithPassphrase(key, keyPassphrase)
-		if err != nil {
-			log.Error("failed to parse key with passphrase")
-			return nil, err
-		}
-		return parsedKey, err
-	}
-
-	log.Debug("key has no passphrase")
-	parsedKey, err = ssh.ParsePrivateKey(key)
-	if err != nil {
-		log.Error("failed to parse key")
-		return nil, err
-	}
-	return parsedKey, err
-}
-
-func SSHAuthMethods(pass string, key, keyPassphrase []byte) ([]ssh.AuthMethod, error) {
-	if len(key) > 0 && utils.IsNotEmpty(pass) {
-		log.Debug("will be authenticating using key and password")
-		parsedKey, err := ParsePrivateKey(key, keyPassphrase)
-		if err != nil {
-			return nil, err
-		}
-		return []ssh.AuthMethod{
-			ssh.PublicKeys(parsedKey),
-			ssh.Password(pass),
-		}, nil
-	} else if len(key) > 0 {
-		log.Debug("will be authenticating using key")
-		parsedKey, err := ParsePrivateKey(key, keyPassphrase)
-		if err != nil {
-			return nil, err
-		}
-		return []ssh.AuthMethod{
-			ssh.PublicKeys(parsedKey),
-		}, nil
-	} else if utils.IsNotEmpty(pass) {
-		log.Debug("will be authenticating using password")
-		return []ssh.AuthMethod{
-			ssh.Password(pass),
-		}, nil
-	}
-
-	return nil, fmt.Errorf("either one of password or key is required")
-}
-
 func NewSFTPClient(cfg config.Config) (SFTPClient, error) {
 	addr := fmt.Sprintf("%s:%d", cfg.GetSFTPHost(), cfg.GetSFTPPort())
-	auth, err := SSHAuthMethods(cfg.GetSFTPPass(), cfg.GetSFTPKey(), cfg.GetSFTPKeyPassphrase())
+	auth, err := utils.SSHAuthMethods(cfg.GetSFTPPass(), cfg.GetSFTPKey(), cfg.GetSFTPKeyPassphrase())
 	if err != nil {
 		log.Error("unable to get SSH auth methods")
 		return nil, err

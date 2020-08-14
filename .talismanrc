@@ -1,6 +1,6 @@
-fileignoreconfig:
-- filename: go.sum
-  checksum: 05c7b914f88d6678fb1966c9e609121b2b7e67aef028a6b05d9cc6b076a570f0
-- filename: pkg/internal/mocks/config.go
-  checksum: 82bb28fe2592454078a24a6b9302ecff8533c3650c7c147aacbba57eb37d3ec6
 
+fileignoreconfig:
+- filename: pkg/internal/mocks/ssh_key.go
+  checksum: 79a7d1dfe0d71923bf55d108093ab8b841783a5dce3f5a73d6f246dc9a9aa990
+- filename: pkg/utils/utils_test.go
+  checksum: b58ec705d049b542883f77ef0ad56e4070103e16648f4c85ec5e2ad2f3c3667f
