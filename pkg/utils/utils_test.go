@@ -2,13 +2,14 @@ package utils_test
 
 import (
 	"fmt"
+	"reflect"
+	"runtime"
+	"testing"
+
 	"github.com/arunvelsriram/sftp-exporter/pkg/internal/mocks"
 	"github.com/arunvelsriram/sftp-exporter/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/ssh"
-	"reflect"
-	"runtime"
-	"testing"
 )
 
 func TestIsEmpty(t *testing.T) {
@@ -171,9 +172,9 @@ func TestSSHAuthMethods(t *testing.T) {
 			authMethods, err := utils.SSHAuthMethods(test.pass, test.key, test.keyPassphrase)
 
 			assert.Len(t, authMethods, len(test.authMethods))
-			for i := 0; i < len(test.authMethods); i++ {
+			for i, expectedAuthMethod := range test.authMethods {
+				expected := runtime.FuncForPC(reflect.ValueOf(expectedAuthMethod).Pointer()).Name()
 				actual := runtime.FuncForPC(reflect.ValueOf(authMethods[i]).Pointer()).Name()
-				expected := runtime.FuncForPC(reflect.ValueOf(test.authMethods[i]).Pointer()).Name()
 				assert.Equal(t, expected, actual)
 			}
 			assert.Equal(t, test.err, err)

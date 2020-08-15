@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/arunvelsriram/sftp-exporter/pkg/service"
+
 	"github.com/arunvelsriram/sftp-exporter/pkg/client"
 	"github.com/arunvelsriram/sftp-exporter/pkg/collector"
 	"github.com/arunvelsriram/sftp-exporter/pkg/config"
@@ -13,8 +15,9 @@ import (
 )
 
 func Start(cfg config.Config) error {
-	createClientFn := collector.CreateClientFn(client.NewSFTPClient)
-	sftpCollector := collector.NewSFTPCollector(cfg, createClientFn)
+	sftpClient := client.NewSFTPClient(cfg)
+	sftpService := service.NewSFTPService(cfg, sftpClient)
+	sftpCollector := collector.NewSFTPCollector(cfg, sftpService)
 	prometheus.MustRegister(sftpCollector)
 
 	r := http.NewServeMux()

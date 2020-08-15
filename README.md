@@ -1,9 +1,5 @@
 # sftp-exporter (W.I.P)
 
-## TODO
+## Grafana
 
-- [x] Create grafana dashbiard and test the exporter
-- [ ] Add missing tests
-- [ ] Publish dashboard
-- [ ] Update readme
-- [ ] Setup CI/CD
+[Grafana Dashoard](https://grafana.com/grafana/dashboards/12828)

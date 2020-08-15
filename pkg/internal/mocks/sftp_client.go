@@ -5,8 +5,9 @@
 package mocks
 
 import (
-	model "github.com/arunvelsriram/sftp-exporter/pkg/model"
 	gomock "github.com/golang/mock/gomock"
+	fs "github.com/kr/fs"
+	sftp "github.com/pkg/sftp"
 	reflect "reflect"
 )
 
@@ -33,10 +34,26 @@ func (m *MockSFTPClient) EXPECT() *MockSFTPClientMockRecorder {
 	return m.recorder
 }
 
-// Close mocks base method
-func (m *MockSFTPClient) Close() {
+// Connect mocks base method
+func (m *MockSFTPClient) Connect() error {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Close")
+	ret := m.ctrl.Call(m, "Connect")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Connect indicates an expected call of Connect
+func (mr *MockSFTPClientMockRecorder) Connect() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockSFTPClient)(nil).Connect))
+}
+
+// Close mocks base method
+func (m *MockSFTPClient) Close() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Close indicates an expected call of Close
@@ -45,32 +62,31 @@ func (mr *MockSFTPClientMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockSFTPClient)(nil).Close))
 }
 
-// FSStats mocks base method
-func (m *MockSFTPClient) FSStats() (model.FSStats, error) {
+// StatVFS mocks base method
+func (m *MockSFTPClient) StatVFS(path string) (*sftp.StatVFS, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FSStats")
-	ret0, _ := ret[0].(model.FSStats)
+	ret := m.ctrl.Call(m, "StatVFS", path)
+	ret0, _ := ret[0].(*sftp.StatVFS)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FSStats indicates an expected call of FSStats
-func (mr *MockSFTPClientMockRecorder) FSStats() *gomock.Call {
+// StatVFS indicates an expected call of StatVFS
+func (mr *MockSFTPClientMockRecorder) StatVFS(path interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FSStats", reflect.TypeOf((*MockSFTPClient)(nil).FSStats))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StatVFS", reflect.TypeOf((*MockSFTPClient)(nil).StatVFS), path)
 }
 
-// ObjectStats mocks base method
-func (m *MockSFTPClient) ObjectStats() (model.ObjectStats, error) {
+// Walk mocks base method
+func (m *MockSFTPClient) Walk(root string) *fs.Walker {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ObjectStats")
-	ret0, _ := ret[0].(model.ObjectStats)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "Walk", root)
+	ret0, _ := ret[0].(*fs.Walker)
+	return ret0
 }
 
-// ObjectStats indicates an expected call of ObjectStats
-func (mr *MockSFTPClientMockRecorder) ObjectStats() *gomock.Call {
+// Walk indicates an expected call of Walk
+func (mr *MockSFTPClientMockRecorder) Walk(root interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ObjectStats", reflect.TypeOf((*MockSFTPClient)(nil).ObjectStats))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Walk", reflect.TypeOf((*MockSFTPClient)(nil).Walk), root)
 }

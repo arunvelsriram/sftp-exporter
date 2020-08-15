@@ -36,7 +36,7 @@ test: ## run unit tests
 run: ## run the app
 	go run main.go
 
-check: install-deps fmt lint test ## runs fmt, lint, test
+check: install-deps fmt lint mocks test ## runs fmt, lint, test
 
 install-mockgen: ## install mockgen
 	go get github.com/golang/mock/mockgen@$(MOCKGEN_VERSION)

@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"github.com/arunvelsriram/sftp-exporter/pkg/service"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/client"
@@ -49,8 +50,8 @@ var (
 type CreateClientFn func(config.Config) (client.SFTPClient, error)
 
 type SFTPCollector struct {
-	config         config.Config
-	createClientFn CreateClientFn
+	config      config.Config
+	sftpService service.SFTPService
 }
 
 func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
@@ -62,36 +63,30 @@ func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
-	sftpClient, err := s.createClientFn(s.config)
-	if err != nil {
+	if err := s.sftpService.Connect(); err != nil {
 		ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 0)
-		log.WithFields(log.Fields{"event": "creating SFTP sftpClient"}).Error(err)
+		log.WithFields(log.Fields{"event": "creating SFTP connection"}).Error(err)
 		return
 	}
-	defer sftpClient.Close()
+	defer s.sftpService.Close()
 	ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 1)
 
-	fsStats, err := sftpClient.FSStats()
-	if err != nil {
-		log.WithFields(log.Fields{"event": "getting FS stats"}).Error(err)
-	} else {
-		for _, stat := range fsStats {
-			ch <- prometheus.MustNewConstMetric(fsTotalSpace, prometheus.GaugeValue, stat.TotalSpace, stat.Path)
-			ch <- prometheus.MustNewConstMetric(fsFreeSpace, prometheus.GaugeValue, stat.FreeSpace, stat.Path)
-		}
+	fsStats := s.sftpService.FSStats()
+	for _, stat := range fsStats {
+		ch <- prometheus.MustNewConstMetric(fsTotalSpace, prometheus.GaugeValue, stat.TotalSpace, stat.Path)
+		ch <- prometheus.MustNewConstMetric(fsFreeSpace, prometheus.GaugeValue, stat.FreeSpace, stat.Path)
 	}
 
-	objectStats, err := sftpClient.ObjectStats()
-	if err != nil {
-		log.WithFields(log.Fields{"event": "getting object stats"}).Error(err)
-	} else {
-		for _, stat := range objectStats {
-			ch <- prometheus.MustNewConstMetric(objectCount, prometheus.GaugeValue, stat.ObjectCount, stat.Path)
-			ch <- prometheus.MustNewConstMetric(objectSize, prometheus.GaugeValue, stat.ObjectSize, stat.Path)
-		}
+	objectStats := s.sftpService.ObjectStats()
+	for _, stat := range objectStats {
+		ch <- prometheus.MustNewConstMetric(objectCount, prometheus.GaugeValue, stat.ObjectCount, stat.Path)
+		ch <- prometheus.MustNewConstMetric(objectSize, prometheus.GaugeValue, stat.ObjectSize, stat.Path)
 	}
 }
 
-func NewSFTPCollector(cfg config.Config, fn CreateClientFn) prometheus.Collector {
-	return SFTPCollector{config: cfg, createClientFn: fn}
+func NewSFTPCollector(cfg config.Config, s service.SFTPService) prometheus.Collector {
+	return SFTPCollector{
+		config:      cfg,
+		sftpService: s,
+	}
 }
