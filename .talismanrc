@@ -1,3 +1,3 @@
 fileignoreconfig:
-- filename: pkg/utils/utils_test.go
-  checksum: 6b68e750c9df29c3ef6fab8d34be92cadefc9985ddcbcf1fef2ba1c23f93ac0c
+- filename: README.md
+  checksum: 010a2590c96fcb1ab1368953b5dbf30bc816990c9cd60babc47a35d9632bb2f3
