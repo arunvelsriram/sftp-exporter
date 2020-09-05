@@ -14,7 +14,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfg config.Config
 var cfgFile string
 
 var rootCmd = &cobra.Command{
@@ -22,7 +21,26 @@ var rootCmd = &cobra.Command{
 	Short: "",
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
+		log.SetFormatter(&log.TextFormatter{
+			FullTimestamp: true,
+		})
+
+		if err := viper.ReadInConfig(); err != nil {
+			log.WithField("event", "reading config file").Warn(err)
+		} else {
+			log.WithField("event", "reading config file").Infof("config file used: %s", viper.ConfigFileUsed())
+		}
+
+		fs := afero.NewOsFs()
+		cfg := config.MustLoadConfig(fs)
+		level, err := log.ParseLevel(cfg.GetLogLevel())
+		if err != nil {
+			panic(err)
+		}
+		log.SetLevel(level)
+
 		log.Debugf("config dump: %+v\n", cfg)
+
 		if err := server.Start(cfg); err != nil {
 			log.WithFields(log.Fields{"event": "starting server"}).Fatal(err)
 		}
@@ -84,24 +102,6 @@ func init() {
 }
 
 func initConfig() {
-	log.SetFormatter(&log.TextFormatter{
-		FullTimestamp: true,
-	})
-
 	viper.SetConfigFile(cfgFile)
 	viper.AutomaticEnv()
-	if err := viper.ReadInConfig(); err != nil {
-		log.WithField("event", "reading config file").Warn(err)
-	} else {
-		log.WithField("event", "reading config file").Infof("config file used: %s", viper.ConfigFileUsed())
-	}
-
-	fs := afero.NewOsFs()
-	cfg = config.MustLoadConfig(fs)
-
-	level, err := log.ParseLevel(cfg.GetLogLevel())
-	if err != nil {
-		panic(err)
-	}
-	log.SetLevel(level)
 }

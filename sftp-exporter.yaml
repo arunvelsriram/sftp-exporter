@@ -3,4 +3,4 @@ sftp_port: 22
 sftp_user: username
 sftp_pass: password
 sftp_paths: ["/path1", "/path2"]
-log_level: debug
+log_level: info
