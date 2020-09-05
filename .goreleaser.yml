@@ -4,7 +4,10 @@ builds:
     goos:
       - linux
 archives:
-  - replacements:
+  -
+    files:
+      - sftp-exporter.yaml
+    replacements:
       linux: Linux
       amd64: x86_64
 checksum:
