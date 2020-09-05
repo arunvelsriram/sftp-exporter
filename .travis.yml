@@ -5,3 +5,10 @@ env:
   global:
     - GO111MODULE=on
 script: make check
+deploy:
+  - provider: script
+    skip_cleanup: false
+    script: curl -sL https://git.io/goreleaser | bash
+    on:
+      tags: true
+      condition: "$TRAVIS_OS_NAME = linux"

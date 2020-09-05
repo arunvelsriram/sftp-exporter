@@ -1,6 +1,7 @@
 .PHONY: help
 
 APP=sftp-exporter
+APP_EXECUTABLE="./out/$(APP)"
 GOLANGCI_LINT_VERSION=v1.30.0
 MOCKGEN_VERSION=v1.4.3
 
@@ -26,7 +27,7 @@ lint: install-golangci-lint ## run lint
 	$(GOLANGCI_LINT) run -v
 
 build: ## compile the app
-	go build -o ./bin/$(APP) main.go
+	go build -o $(APP_EXECUTABLE) main.go
 
 test: ## run unit tests
 	mkdir -p coverage
