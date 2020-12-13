@@ -107,6 +107,10 @@ func MustLoadConfig(fs afero.Fs) Config {
 	}
 }
 
+func NewConfig() Config {
+	return sftpExporterConfig{}
+}
+
 func (c sftpExporterConfig) GetBindAddress() string {
 	return c.BindAddress
 }

@@ -2,6 +2,8 @@ package server
 
 import (
 	"fmt"
+	"github.com/arunvelsriram/sftp-exporter/pkg/constants/viperkeys"
+	"github.com/spf13/viper"
 	"net/http"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/service"
@@ -14,18 +16,18 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Start(cfg config.Config) error {
-	sftpClient := client.NewSFTPClient(cfg)
-	sftpService := service.NewSFTPService(cfg, sftpClient)
-	sftpCollector := collector.NewSFTPCollector(cfg, sftpService)
+func Start() error {
+	sftpClient := client.NewSFTPClient(config.NewConfig())
+	sftpService := service.NewSFTPService(config.NewConfig(), sftpClient)
+	sftpCollector := collector.NewSFTPCollector(config.NewConfig(), sftpService)
 	prometheus.MustRegister(sftpCollector)
 
 	r := http.NewServeMux()
 	r.Handle("/healthz", WithLogging(healthzHandler()))
 	r.Handle("/metrics", WithLogging(promhttp.Handler()))
 
-	addr := fmt.Sprintf("%s:%d", cfg.GetBindAddress(), cfg.GetPort())
-	log.Infof("will be listening on: %s", addr)
+	addr := fmt.Sprintf("%s:%d", viper.GetString(viperkeys.BindAddress), viper.GetInt(viperkeys.Port))
+	log.Infof("Server will be listening on: %s", addr)
 	return http.ListenAndServe(addr, r)
 }
 
