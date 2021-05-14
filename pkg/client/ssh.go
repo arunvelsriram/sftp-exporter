@@ -15,7 +15,8 @@ func parsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error
 		log.Debug("key has passphrase")
 		parsedKey, err = ssh.ParsePrivateKeyWithPassphrase(key, keyPassphrase)
 		if err != nil {
-			log.Error("failed to parse key with passphrase")
+			log.WithField("when", "parsing encrypted ssh key").
+				Error("failed to parse key with passphrase")
 			return nil, err
 		}
 		return parsedKey, err
@@ -24,7 +25,7 @@ func parsePrivateKey(key, keyPassphrase []byte) (parsedKey ssh.Signer, err error
 	log.Debug("key has no passphrase")
 	parsedKey, err = ssh.ParsePrivateKey(key)
 	if err != nil {
-		log.Error("failed to parse key")
+		log.WithField("when", "parsing ssh key").Error("failed to parse key")
 		return nil, err
 	}
 	return parsedKey, err
@@ -43,6 +44,7 @@ func sshAuthMethods() ([]ssh.AuthMethod, error) {
 		log.Debug("key and password are provided")
 		parsedKey, err := parsePrivateKey(key, keyPassphrase)
 		if err != nil {
+			log.WithField("when", "determining SSH authentication methods").Error(err)
 			return nil, err
 		}
 		return []ssh.AuthMethod{
@@ -59,6 +61,7 @@ func sshAuthMethods() ([]ssh.AuthMethod, error) {
 		log.Debug("key is provided")
 		parsedKey, err := parsePrivateKey(key, keyPassphrase)
 		if err != nil {
+			log.WithField("when", "determining SSH authentication methods").Error(err)
 			return nil, err
 		}
 		return []ssh.AuthMethod{
@@ -74,6 +77,7 @@ func NewSSHClient() (*ssh.Client, error) {
 	addr := fmt.Sprintf("%s:%d", viper.GetString(viperkeys.SFTPHost), viper.GetInt(viperkeys.SFTPPort))
 	auth, err := sshAuthMethods()
 	if err != nil {
+		log.WithField("when", "creating a SSH client").Error(err)
 		return nil, err
 	}
 	clientConfig := &ssh.ClientConfig{

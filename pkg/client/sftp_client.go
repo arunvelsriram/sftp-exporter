@@ -23,14 +23,12 @@ type (
 
 func (s *sftpClient) Close() error {
 	if err := s.Client.Close(); err != nil {
-		log.WithFields(log.Fields{
-			"event": "closing SFTP connection"},
-		).Error(err)
+		log.WithField("when", "closing SFTP connection").Error(err)
+		return err
 	}
 	if err := s.sshClient.Close(); err != nil {
-		log.WithFields(log.Fields{
-			"event": "closing SSH connection"},
-		).Error(err)
+		log.WithField("when", "closing SSH connection").Error(err)
+		return err
 	}
 	return nil
 }
@@ -44,9 +42,7 @@ func (s *sftpClient) Connect() (err error) {
 	s.Client, err = sftp.NewClient(s.sshClient)
 	if err != nil {
 		if err := s.sshClient.Close(); err != nil {
-			log.WithFields(log.Fields{
-				"event": "closing SSH connection"},
-			).Error(err)
+			log.WithField("when", "opening SFTP connection").Error(err)
 		}
 		return err
 	}
