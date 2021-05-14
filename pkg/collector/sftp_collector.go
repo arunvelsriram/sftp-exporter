@@ -32,6 +32,7 @@ var (
 		nil,
 	)
 
+	// TODO: Rename this metric and re-evaluate implementation
 	objectCount = prometheus.NewDesc(
 		prometheus.BuildFQName(c.Namespace, "", "objects_count_total"),
 		"Total number of objects in the path",
@@ -39,6 +40,7 @@ var (
 		nil,
 	)
 
+	// TODO: Rename this metric and re-evaluate implementation
 	objectSize = prometheus.NewDesc(
 		prometheus.BuildFQName(c.Namespace, "", "objects_size_total_bytes"),
 		"Total size of all objects in the path",
@@ -50,7 +52,6 @@ var (
 type CreateClientFn func(config.Config) (client.SFTPClient, error)
 
 type SFTPCollector struct {
-	config      config.Config
 	sftpService service.SFTPService
 }
 
@@ -84,9 +85,6 @@ func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-func NewSFTPCollector(cfg config.Config, s service.SFTPService) prometheus.Collector {
-	return SFTPCollector{
-		config:      cfg,
-		sftpService: s,
-	}
+func NewSFTPCollector(s service.SFTPService) prometheus.Collector {
+	return SFTPCollector{sftpService: s}
 }

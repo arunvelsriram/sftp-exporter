@@ -2,9 +2,10 @@ package server
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/arunvelsriram/sftp-exporter/pkg/constants/viperkeys"
 	"github.com/spf13/viper"
-	"net/http"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/service"
 
@@ -19,7 +20,7 @@ import (
 func Start() error {
 	sftpClient := client.NewSFTPClient(config.NewConfig())
 	sftpService := service.NewSFTPService(config.NewConfig(), sftpClient)
-	sftpCollector := collector.NewSFTPCollector(config.NewConfig(), sftpService)
+	sftpCollector := collector.NewSFTPCollector(sftpService)
 	prometheus.MustRegister(sftpCollector)
 
 	r := http.NewServeMux()

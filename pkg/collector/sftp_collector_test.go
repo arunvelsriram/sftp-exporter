@@ -16,7 +16,6 @@ import (
 type SFTPCollectorSuite struct {
 	suite.Suite
 	ctrl        *gomock.Controller
-	config      *mocks.MockConfig
 	sftpService *mocks.MockSFTPService
 	collector   prometheus.Collector
 }
@@ -27,9 +26,8 @@ func TestSFTPCollectorSuite(t *testing.T) {
 
 func (s *SFTPCollectorSuite) SetupTest() {
 	s.ctrl = gomock.NewController(s.T())
-	s.config = mocks.NewMockConfig(s.ctrl)
 	s.sftpService = mocks.NewMockSFTPService(s.ctrl)
-	s.collector = NewSFTPCollector(s.config, s.sftpService)
+	s.collector = NewSFTPCollector(s.sftpService)
 }
 
 func (s *SFTPCollectorSuite) TearDownTest() {
