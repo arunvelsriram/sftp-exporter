@@ -9,8 +9,6 @@ import (
 
 type (
 	SFTPService interface {
-		Connect() error
-		Close() error
 		FSStats() model.FSStats
 		ObjectStats() model.ObjectStats
 	}
@@ -20,20 +18,6 @@ type (
 		config     config.Config
 	}
 )
-
-func (s sftpService) Connect() error {
-	if err := s.sftpClient.Connect(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s sftpService) Close() error {
-	if err := s.sftpClient.Close(); err != nil {
-		return err
-	}
-	return nil
-}
 
 func (s sftpService) FSStats() model.FSStats {
 	paths := s.config.GetSFTPPaths()

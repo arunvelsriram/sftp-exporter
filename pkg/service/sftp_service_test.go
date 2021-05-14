@@ -60,38 +60,6 @@ func (s *SFTPServiceSuite) TearDownTest() {
 	s.ctrl.Finish()
 }
 
-func (s *SFTPServiceSuite) TestSFTPServiceConnect() {
-	s.sftpClient.EXPECT().Connect().Return(nil)
-
-	err := s.service.Connect()
-
-	s.NoError(err)
-}
-
-func (s *SFTPServiceSuite) TestSFTPServiceConnectShouldReturnErrIfClientConnectFails() {
-	s.sftpClient.EXPECT().Connect().Return(fmt.Errorf("failed to connect"))
-
-	err := s.service.Connect()
-
-	s.EqualError(err, "failed to connect")
-}
-
-func (s *SFTPServiceSuite) TestSFTPServiceClose() {
-	s.sftpClient.EXPECT().Close().Return(nil)
-
-	err := s.service.Close()
-
-	s.NoError(err)
-}
-
-func (s *SFTPServiceSuite) TestSFTPServiceCloseShouldReturnErrIfClosingConnectionFails() {
-	s.sftpClient.EXPECT().Close().Return(fmt.Errorf("failed to close"))
-
-	err := s.service.Close()
-
-	s.EqualError(err, "failed to close")
-}
-
 func (s *SFTPServiceSuite) TestSFTPServiceFSStats() {
 	s.config.EXPECT().GetSFTPPaths().Return([]string{"/path0", "/path1"})
 	s.sftpClient.EXPECT().StatVFS("/path0").Return(&sftp.StatVFS{

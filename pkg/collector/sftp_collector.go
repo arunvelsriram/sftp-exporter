@@ -5,7 +5,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/client"
-	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	c "github.com/arunvelsriram/sftp-exporter/pkg/constants"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -49,10 +48,9 @@ var (
 	)
 )
 
-type CreateClientFn func(config.Config) (client.SFTPClient, error)
-
 type SFTPCollector struct {
 	sftpService service.SFTPService
+	sftpClient  client.SFTPClient
 }
 
 func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
@@ -64,12 +62,12 @@ func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
-	if err := s.sftpService.Connect(); err != nil {
+	if err := s.sftpClient.Connect(); err != nil {
 		ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 0)
 		log.WithField("when", "collecting up metric").Error(err)
 		return
 	}
-	defer s.sftpService.Close()
+	defer s.sftpClient.Close()
 	ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 1)
 
 	fsStats := s.sftpService.FSStats()
@@ -85,6 +83,6 @@ func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-func NewSFTPCollector(s service.SFTPService) prometheus.Collector {
-	return SFTPCollector{sftpService: s}
+func NewSFTPCollector(s service.SFTPService, c client.SFTPClient) prometheus.Collector {
+	return SFTPCollector{sftpService: s, sftpClient: c}
 }

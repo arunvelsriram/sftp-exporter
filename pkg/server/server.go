@@ -20,7 +20,7 @@ import (
 func Start() error {
 	sftpClient := client.NewSFTPClient()
 	sftpService := service.NewSFTPService(config.NewConfig(), sftpClient)
-	sftpCollector := collector.NewSFTPCollector(sftpService)
+	sftpCollector := collector.NewSFTPCollector(sftpService, sftpClient)
 	prometheus.MustRegister(sftpCollector)
 
 	r := http.NewServeMux()

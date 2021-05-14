@@ -33,34 +33,6 @@ func (m *MockSFTPService) EXPECT() *MockSFTPServiceMockRecorder {
 	return m.recorder
 }
 
-// Connect mocks base method
-func (m *MockSFTPService) Connect() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Connect")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Connect indicates an expected call of Connect
-func (mr *MockSFTPServiceMockRecorder) Connect() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockSFTPService)(nil).Connect))
-}
-
-// Close mocks base method
-func (m *MockSFTPService) Close() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Close")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Close indicates an expected call of Close
-func (mr *MockSFTPServiceMockRecorder) Close() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockSFTPService)(nil).Close))
-}
-
 // FSStats mocks base method
 func (m *MockSFTPService) FSStats() model.FSStats {
 	m.ctrl.T.Helper()

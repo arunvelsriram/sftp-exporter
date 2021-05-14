@@ -17,6 +17,7 @@ type SFTPCollectorSuite struct {
 	suite.Suite
 	ctrl        *gomock.Controller
 	sftpService *mocks.MockSFTPService
+	sftpClient  *mocks.MockSFTPClient
 	collector   prometheus.Collector
 }
 
@@ -27,7 +28,8 @@ func TestSFTPCollectorSuite(t *testing.T) {
 func (s *SFTPCollectorSuite) SetupTest() {
 	s.ctrl = gomock.NewController(s.T())
 	s.sftpService = mocks.NewMockSFTPService(s.ctrl)
-	s.collector = NewSFTPCollector(s.sftpService)
+	s.sftpClient = mocks.NewMockSFTPClient(s.ctrl)
+	s.collector = NewSFTPCollector(s.sftpService, s.sftpClient)
 }
 
 func (s *SFTPCollectorSuite) TearDownTest() {
@@ -72,10 +74,10 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorDescribe() {
 }
 
 func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteUpMetric() {
-	s.sftpService.EXPECT().Connect().Return(nil)
+	s.sftpClient.EXPECT().Connect().Return(nil)
 	s.sftpService.EXPECT().FSStats()
 	s.sftpService.EXPECT().ObjectStats()
-	s.sftpService.EXPECT().Close()
+	s.sftpClient.EXPECT().Close()
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
 
@@ -96,7 +98,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteUpMetric() {
 }
 
 func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteUpMetricAndReturnIfClientCreationFails() {
-	s.sftpService.EXPECT().Connect().Return(fmt.Errorf("failed to connect to SFTP"))
+	s.sftpClient.EXPECT().Connect().Return(fmt.Errorf("failed to connect to SFTP"))
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
 
@@ -129,10 +131,10 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteFSStats() {
 			FreeSpace:  4444.44,
 		},
 	})
-	s.sftpService.EXPECT().Connect().Return(nil)
+	s.sftpClient.EXPECT().Connect().Return(nil)
 	s.sftpService.EXPECT().FSStats().Return(fsStats)
 	s.sftpService.EXPECT().ObjectStats()
-	s.sftpService.EXPECT().Close()
+	s.sftpClient.EXPECT().Close()
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
 
@@ -185,10 +187,10 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteFSStats() {
 }
 
 func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteFSStatsForEmpty() {
-	s.sftpService.EXPECT().Connect().Return(nil)
+	s.sftpClient.EXPECT().Connect().Return(nil)
 	s.sftpService.EXPECT().FSStats().Return(model.FSStats([]model.FSStat{}))
 	s.sftpService.EXPECT().ObjectStats()
-	s.sftpService.EXPECT().Close()
+	s.sftpClient.EXPECT().Close()
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
 
@@ -216,10 +218,10 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectStats() {
 			ObjectSize:  2222.22,
 		},
 	})
-	s.sftpService.EXPECT().Connect().Return(nil)
+	s.sftpClient.EXPECT().Connect().Return(nil)
 	s.sftpService.EXPECT().FSStats()
 	s.sftpService.EXPECT().ObjectStats().Return(objectStats)
-	s.sftpService.EXPECT().Close()
+	s.sftpClient.EXPECT().Close()
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
 
@@ -272,10 +274,10 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectStats() {
 }
 
 func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteObjectStatsForEmpty() {
-	s.sftpService.EXPECT().Connect().Return(nil)
+	s.sftpClient.EXPECT().Connect().Return(nil)
 	s.sftpService.EXPECT().FSStats()
 	s.sftpService.EXPECT().ObjectStats().Return(model.ObjectStats(model.ObjectStats{}))
-	s.sftpService.EXPECT().Close()
+	s.sftpClient.EXPECT().Close()
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
 
