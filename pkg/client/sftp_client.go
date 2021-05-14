@@ -1,10 +1,6 @@
 package client
 
 import (
-	"fmt"
-
-	"github.com/arunvelsriram/sftp-exporter/pkg/config"
-	"github.com/arunvelsriram/sftp-exporter/pkg/utils"
 	"github.com/kr/fs"
 	"github.com/pkg/sftp"
 	log "github.com/sirupsen/logrus"
@@ -22,7 +18,6 @@ type (
 	sftpClient struct {
 		*sftp.Client
 		sshClient *ssh.Client
-		config    config.Config
 	}
 )
 
@@ -41,18 +36,7 @@ func (s *sftpClient) Close() error {
 }
 
 func (s *sftpClient) Connect() (err error) {
-	addr := fmt.Sprintf("%s:%d", s.config.GetSFTPHost(), s.config.GetSFTPPort())
-	auth, err := utils.SSHAuthMethods(s.config.GetSFTPPass(), s.config.GetSFTPKey(), s.config.GetSFTPKeyPassphrase())
-	if err != nil {
-		log.Error("unable to get SSH auth methods")
-		return err
-	}
-	clientConfig := &ssh.ClientConfig{
-		User:            s.config.GetSFTPUser(),
-		Auth:            auth,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-	}
-	s.sshClient, err = ssh.Dial("tcp", addr, clientConfig)
+	s.sshClient, err = NewSSHClient()
 	if err != nil {
 		return err
 	}
@@ -69,6 +53,6 @@ func (s *sftpClient) Connect() (err error) {
 	return nil
 }
 
-func NewSFTPClient(cfg config.Config) SFTPClient {
-	return &sftpClient{config: cfg}
+func NewSFTPClient() SFTPClient {
+	return &sftpClient{}
 }

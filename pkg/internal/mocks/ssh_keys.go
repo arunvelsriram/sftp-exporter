@@ -1,5 +1,7 @@
 package mocks
 
+import "encoding/base64"
+
 func SSHKeyWithoutPassphrase() []byte {
 	return []byte(`-----BEGIN RSA PRIVATE KEY-----
 MIIJKQIBAAKCAgEA2riYo+9+vCXacILouh5uL7/chHheDFiFnFx1BOpiwuR5b1b/
@@ -53,6 +55,8 @@ aYQ5p5FzVtbes3BO1lu/nyShlWywlCRBpVCYoqcc3lD6X/2CM6doqNoxDom2mm3z
 2XFDP7eiAWD9VE/lomzFYZjr5pGCJqpbNzcmRMMvZC+cd/CLWds/7wAkVDWu
 -----END RSA PRIVATE KEY-----`)
 }
+
+var KeyPassphrase = "password"
 
 func SSHKeyWithPassphrase() []byte {
 	return []byte(`-----BEGIN RSA PRIVATE KEY-----
@@ -115,3 +119,16 @@ func SSHKeyPassphrase() []byte {
 	return []byte("password")
 }
 
+func EncodedSSHKeyWithoutPassphrase() string {
+	key := SSHKeyWithoutPassphrase()
+	return base64.StdEncoding.EncodeToString(key)
+}
+
+func EncodedSSHKeyWithPassphrase() string {
+	key := SSHKeyWithPassphrase()
+	return base64.StdEncoding.EncodeToString(key)
+}
+
+func EncodedInvalidSSHKey() string {
+	return base64.StdEncoding.EncodeToString([]byte("invalid-ssh-key"))
+}
