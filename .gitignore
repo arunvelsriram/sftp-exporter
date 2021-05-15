@@ -3,3 +3,5 @@ bin
 out
 dist
 coverage
+.DS_Store
+
