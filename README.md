@@ -51,20 +51,20 @@ By default `sftp-exporter` looks for a config file named `sftp-exporter.yaml` in
 ```
 # HELP sftp_filesystem_free_space_bytes Free space in the filesystem containing the path
 # TYPE sftp_filesystem_free_space_bytes gauge
-sftp_filesystem_free_space_bytes{path="/upload1"} 1.4941843456e+10
-sftp_filesystem_free_space_bytes{path="/upload2"} 1.4941843456e+10
+sftp_filesystem_free_space_bytes{path="/upload1"} 7.370901504e+10
+sftp_filesystem_free_space_bytes{path="/upload2"} 7.370901504e+10
 # HELP sftp_filesystem_total_space_bytes Total space in the filesystem containing the path
 # TYPE sftp_filesystem_total_space_bytes gauge
-sftp_filesystem_total_space_bytes{path="/upload1"} 6.2725623808e+10
-sftp_filesystem_total_space_bytes{path="/upload2"} 6.2725623808e+10
-# HELP sftp_objects_count_total Total number of objects in the path
-# TYPE sftp_objects_count_total gauge
-sftp_objects_count_total{path="/upload1"} 6
-sftp_objects_count_total{path="/upload2"} 5
-# HELP sftp_objects_size_total_bytes Total size of all objects in the path
-# TYPE sftp_objects_size_total_bytes gauge
-sftp_objects_size_total_bytes{path="/upload1"} 6.86033e+06
-sftp_objects_size_total_bytes{path="/upload2"} 6.885284e+06
+sftp_filesystem_total_space_bytes{path="/upload1"} 8.4281810944e+10
+sftp_filesystem_total_space_bytes{path="/upload2"} 8.4281810944e+10
+# HELP sftp_objects_available Number of objects in the path
+# TYPE sftp_objects_available gauge
+sftp_objects_available{path="/upload1"} 1
+sftp_objects_available{path="/upload2"} 3
+# HELP sftp_objects_total_size_bytes Total size of all the objects in the path
+# TYPE sftp_objects_total_size_bytes gauge
+sftp_objects_total_size_bytes{path="/upload1"} 312
+sftp_objects_total_size_bytes{path="/upload2"} 2337
 # HELP sftp_up Tells if exporter is able to connect to SFTP
 # TYPE sftp_up gauge
 sftp_up 1

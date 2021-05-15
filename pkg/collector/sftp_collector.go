@@ -32,18 +32,16 @@ var (
 		nil,
 	)
 
-	// TODO: Rename this metric and re-evaluate implementation
 	objectCount = prometheus.NewDesc(
-		prometheus.BuildFQName(c.Namespace, "", "objects_count_total"),
-		"Total number of objects in the path",
+		prometheus.BuildFQName(c.Namespace, "", "objects_available"),
+		"Number of objects in the path",
 		[]string{"path"},
 		nil,
 	)
 
-	// TODO: Rename this metric and re-evaluate implementation
 	objectSize = prometheus.NewDesc(
-		prometheus.BuildFQName(c.Namespace, "", "objects_size_total_bytes"),
-		"Total size of all objects in the path",
+		prometheus.BuildFQName(c.Namespace, "", "objects_total_size_bytes"),
+		"Total size of all the objects in the path",
 		[]string{"path"},
 		nil,
 	)
