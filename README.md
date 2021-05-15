@@ -11,23 +11,31 @@ Configurations can be provided in various ways.
 ### Command-line Flags
 
 ```
+Prometheus Exporter for SFTP.
+
 Usage:
   sftp-exporter [flags]
+  sftp-exporter [command]
+
+Available Commands:
+  help        Help about any command
+  version     Prints the current version
 
 Flags:
       --bind-address string          exporter bind address (default "127.0.0.1")
-      --config-file string           exporter config file (default "sftp-exporter.yaml")
+  -c, --config-file string           exporter config file (default "sftp-exporter.yaml")
   -h, --help                         help for sftp-exporter
       --log-level string             log level [panic | fatal | error | warning | info | debug | trace] (default "info")
       --port int                     exporter port (default 8080)
-      --sftp-host string             sftp host (default "localhost")
-      --sftp-key string              sftp key (base64 encoded)
-      --sftp-key-file string         sftp key file
-      --sftp-key-passphrase string   sftp key passphrase
-      --sftp-pass string             sftp password
-      --sftp-paths strings           sftp paths (default [/])
-      --sftp-port int                sftp port (default 22)
-      --sftp-user string             sftp user
+      --sftp-host string             SFTP host (default "localhost")
+      --sftp-key string              SFTP key (base64 encoded)
+      --sftp-key-passphrase string   SFTP key passphrase
+      --sftp-password string         SFTP password
+      --sftp-paths strings           SFTP paths (default [/])
+      --sftp-port int                SFTP port (default 22)
+      --sftp-user string             SFTP user
+
+Use "sftp-exporter [command] --help" for more information about a command.
 ```
 
 ### Environment Variables
