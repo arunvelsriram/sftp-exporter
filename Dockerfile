@@ -10,5 +10,5 @@ RUN make build
 FROM debian:buster
 
 WORKDIR /sftp-exporter
-COPY --from=builder /sftp-exporter/bin/sftp-exporter .
+COPY --from=builder /sftp-exporter/out/sftp-exporter .
 ENTRYPOINT ["./sftp-exporter"]
