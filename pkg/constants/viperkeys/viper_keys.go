@@ -10,7 +10,6 @@ const (
 	SFTPUser          = "sftp-user"
 	SFTPPassword      = "sftp-password"
 	SFTPKey           = "sftp-key"
-	SFTPKeyFile       = "sftp-key-file"
 	SFTPKeyPassphrase = "sftp-key-passphrase"
 	SFTPPaths         = "sftp-paths"
 )

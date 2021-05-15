@@ -54,7 +54,6 @@ func init() {
 	rootCmd.Flags().String(viperkeys.SFTPUser, "", "SFTP user")
 	rootCmd.Flags().String(viperkeys.SFTPPassword, "", "SFTP password")
 	rootCmd.Flags().String(viperkeys.SFTPKey, "", "SFTP key (base64 encoded)")
-	rootCmd.Flags().String(viperkeys.SFTPKeyFile, "", "SFTP key file")
 	rootCmd.Flags().String(viperkeys.SFTPKeyPassphrase, "", "SFTP key passphrase")
 	rootCmd.Flags().StringSlice(viperkeys.SFTPPaths, []string{"/"}, "SFTP paths")
 
