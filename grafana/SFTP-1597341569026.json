@@ -1,46 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "6.4.1"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "singlestat",
-      "name": "Singlestat",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -58,113 +16,188 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1597341543435,
+  "id": 1,
+  "iteration": 1621081089042,
   "links": [],
   "panels": [
     {
-      "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "Status of SFTP connection",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "from": "",
+              "id": 1,
+              "text": "UP",
+              "to": "",
+              "type": 1,
+              "value": "1"
+            },
+            {
+              "from": "",
+              "id": 2,
+              "text": "DOWN",
+              "to": "",
+              "type": 1,
+              "value": "0"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 1,
-        "w": 24,
+        "h": 7,
+        "w": 8,
         "x": 0,
         "y": 0
-      },
-      "id": 34,
-      "panels": [],
-      "title": "Singlestats",
-      "type": "row"
-    },
-    {
-      "cacheTimeout": null,
-      "colorBackground": true,
-      "colorPostfix": false,
-      "colorPrefix": false,
-      "colorValue": false,
-      "colors": [
-        "#d44a3a",
-        "rgba(237, 129, 40, 0.89)",
-        "#299c46"
-      ],
-      "datasource": "${DS_PROMETHEUS}",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 24,
-        "x": 0,
-        "y": 1
       },
       "id": 24,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "sftp_up",
           "refId": "A"
         }
       ],
-      "thresholds": "0,1",
       "timeFrom": null,
       "timeShift": null,
       "title": "Status",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
+      "type": "stat"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "Status of SFTP connection",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 44,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.4",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
         {
-          "op": "=",
-          "text": "UP",
-          "value": "1"
-        },
-        {
-          "op": "=",
-          "text": "DOWN",
-          "value": "0"
+          "exemplar": true,
+          "expr": "sftp_up",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
         }
       ],
-      "valueName": "avg"
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Status",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:251",
+          "decimals": 0,
+          "format": "none",
+          "label": "",
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:252",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     },
     {
       "cacheTimeout": null,
@@ -175,7 +208,12 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "Prometheus",
+      "description": "Number of objects in the path",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -188,7 +226,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 5
+        "y": 7
       },
       "id": 4,
       "interval": null,
@@ -208,7 +246,6 @@
       "maxPerRow": 3,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "pluginVersion": "6.4.1",
       "postfix": "",
       "postfixFontSize": "50%",
@@ -223,6 +260,13 @@
       ],
       "repeat": "path",
       "repeatDirection": "h",
+      "scopedVars": {
+        "path": {
+          "selected": false,
+          "text": "/upload1",
+          "value": "/upload1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -234,15 +278,18 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sftp_objects_count_total{path=\"$path\"}",
+          "exemplar": true,
+          "expr": "sftp_objects_available{path=\"$path\"}",
           "instant": true,
+          "interval": "",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Object Count ${path}",
+      "title": "Objects Available - ${path}",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -263,7 +310,115 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "Prometheus",
+      "description": "Number of objects in the path",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
+      "id": 45,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "maxPerRow": 3,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "pluginVersion": "6.4.1",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatDirection": "h",
+      "repeatIteration": 1621081089042,
+      "repeatPanelId": 4,
+      "scopedVars": {
+        "path": {
+          "selected": false,
+          "text": "/upload2",
+          "value": "/upload2"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sftp_objects_available{path=\"$path\"}",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Objects Available - ${path}",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "Prometheus",
+      "description": "Total size of all the objects in the path",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "format": "decbytes",
       "gauge": {
         "maxValue": 100,
@@ -276,7 +431,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 12
       },
       "id": 6,
       "interval": null,
@@ -296,7 +451,6 @@
       "maxPerRow": 3,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "pluginVersion": "6.4.1",
       "postfix": "",
       "postfixFontSize": "50%",
@@ -311,6 +465,13 @@
       ],
       "repeat": "path",
       "repeatDirection": "h",
+      "scopedVars": {
+        "path": {
+          "selected": false,
+          "text": "/upload1",
+          "value": "/upload1"
+        }
+      },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
@@ -322,15 +483,18 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sftp_objects_size_total_bytes{path=\"$path\"}",
+          "exemplar": true,
+          "expr": "sftp_objects_total_size_bytes{path=\"$path\"}",
           "instant": true,
+          "interval": "",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Object Size ${path}",
+      "title": "Objects Total Size - ${path}",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -343,26 +507,122 @@
       "valueName": "avg"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Usage for filesystem containing ${path}",
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "Prometheus",
+      "description": "Total size of all the objects in the path",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "format": "decbytes",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
       "gridPos": {
         "h": 5,
         "w": 12,
-        "x": 0,
-        "y": 15
+        "x": 12,
+        "y": 12
       },
-      "id": 10,
+      "id": 46,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
       "maxPerRow": 3,
-      "options": {
-        "fieldOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "defaults": {
-            "mappings": [],
-            "max": 100,
-            "min": 0,
-            "thresholds": [
+      "nullPointMode": "connected",
+      "nullText": null,
+      "pluginVersion": "6.4.1",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatDirection": "h",
+      "repeatIteration": 1621081089042,
+      "repeatPanelId": 6,
+      "scopedVars": {
+        "path": {
+          "selected": false,
+          "text": "/upload2",
+          "value": "/upload2"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sftp_objects_total_size_bytes{path=\"$path\"}",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Objects Total Size - ${path}",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Usage for filesystem containing ${path}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
               {
                 "color": "green",
                 "value": null
@@ -371,58 +631,153 @@
                 "color": "red",
                 "value": 80
               }
-            ],
-            "unit": "percent"
+            ]
           },
-          "override": {},
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 10,
+      "maxPerRow": 3,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
           "values": false
         },
-        "orientation": "auto",
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "6.4.1",
+      "pluginVersion": "7.5.4",
       "repeat": "path",
       "repeatDirection": "h",
+      "scopedVars": {
+        "path": {
+          "selected": false,
+          "text": "/upload1",
+          "value": "/upload1"
+        }
+      },
       "targets": [
         {
-          "expr": "(sftp_filesystem_free_space_bytes{path=\"$path\"}/sftp_filesystem_total_space_bytes{path=\"$path\"})*100",
+          "exemplar": true,
+          "expr": "((sftp_filesystem_total_space_bytes{path=\"$path\"} - sftp_filesystem_free_space_bytes{path=\"$path\"})/sftp_filesystem_total_space_bytes{path=\"$path\"}) *100",
+          "interval": "",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Filesystem Usage ${path}",
+      "title": "Filesystem Usage - ${path}",
       "type": "gauge"
     },
     {
-      "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 20
+      "datasource": "Prometheus",
+      "description": "Usage for filesystem containing ${path}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
       },
-      "id": 39,
-      "panels": [],
-      "title": "Graphs",
-      "type": "row"
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 47,
+      "maxPerRow": 3,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "7.5.4",
+      "repeatDirection": "h",
+      "repeatIteration": 1621081089042,
+      "repeatPanelId": 10,
+      "scopedVars": {
+        "path": {
+          "selected": false,
+          "text": "/upload2",
+          "value": "/upload2"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "((sftp_filesystem_total_space_bytes{path=\"$path\"} - sftp_filesystem_free_space_bytes{path=\"$path\"})/sftp_filesystem_total_space_bytes{path=\"$path\"}) *100",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Filesystem Usage - ${path}",
+      "type": "gauge"
     },
     {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "Prometheus",
+      "description": "Number of objects available in each path",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 21
+        "y": 22
       },
+      "hiddenSeries": false,
       "id": 15,
       "legend": {
         "avg": false,
@@ -437,9 +792,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -449,7 +805,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sftp_objects_count_total",
+          "exemplar": true,
+          "expr": "sftp_objects_available",
+          "interval": "",
           "legendFormat": "{{path}}",
           "refId": "A"
         }
@@ -458,7 +816,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total Object Count",
+      "title": "Objects Available",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -474,6 +832,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:474",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -482,6 +841,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:475",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -500,15 +860,23 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "Prometheus",
+      "description": "Total size of all the objects in each path",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 21
+        "y": 22
       },
+      "hiddenSeries": false,
       "id": 19,
       "legend": {
         "avg": false,
@@ -523,9 +891,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -535,7 +904,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sftp_objects_size_total_bytes",
+          "exemplar": true,
+          "expr": "sftp_objects_total_size_bytes",
+          "interval": "",
           "legendFormat": "{{path}}",
           "refId": "A"
         }
@@ -544,7 +915,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total Object Size",
+      "title": "Objects Total Size",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -560,6 +931,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:559",
           "format": "decbytes",
           "label": null,
           "logBase": 1,
@@ -568,6 +940,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:560",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -582,7 +955,7 @@
       }
     }
   ],
-  "schemaVersion": 20,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [
     "sftp"
@@ -591,16 +964,25 @@
     "list": [
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(sftp_objects_count_total, path)",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(sftp_objects_available, path)",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "path",
         "options": [],
-        "query": "label_values(sftp_objects_count_total, path)",
+        "query": {
+          "query": "label_values(sftp_objects_available, path)",
+          "refId": "StandardVariableQuery"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -614,7 +996,7 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -634,5 +1016,5 @@
   "timezone": "",
   "title": "SFTP",
   "uid": "SJWaIyIGz",
-  "version": 3
+  "version": 29
 }
