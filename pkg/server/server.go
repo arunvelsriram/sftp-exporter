@@ -7,11 +7,8 @@ import (
 	"github.com/arunvelsriram/sftp-exporter/pkg/constants/viperkeys"
 	"github.com/spf13/viper"
 
-	"github.com/arunvelsriram/sftp-exporter/pkg/service"
-
 	"github.com/arunvelsriram/sftp-exporter/pkg/client"
 	"github.com/arunvelsriram/sftp-exporter/pkg/collector"
-	"github.com/arunvelsriram/sftp-exporter/pkg/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
@@ -19,8 +16,7 @@ import (
 
 func Start() error {
 	sftpClient := client.NewSFTPClient()
-	sftpService := service.NewSFTPService(config.NewConfig(), sftpClient)
-	sftpCollector := collector.NewSFTPCollector(sftpService, sftpClient)
+	sftpCollector := collector.NewSFTPCollector(sftpClient)
 	prometheus.MustRegister(sftpCollector)
 
 	r := http.NewServeMux()

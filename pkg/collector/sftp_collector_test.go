@@ -2,28 +2,50 @@ package collector
 
 import (
 	"fmt"
+	"os"
+	"path"
+	"strings"
 	"testing"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/constants/viperkeys"
-	"github.com/arunvelsriram/sftp-exporter/pkg/model"
-	"github.com/pkg/sftp"
-	"github.com/spf13/viper"
-
 	"github.com/arunvelsriram/sftp-exporter/pkg/internal/mocks"
 	"github.com/golang/mock/gomock"
+	"github.com/kr/fs"
+	"github.com/pkg/sftp"
 	"github.com/prometheus/client_golang/prometheus"
 	dto "github.com/prometheus/client_model/go"
+	"github.com/spf13/afero"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
 
 	log "github.com/sirupsen/logrus"
 )
 
+// Refer: https://github.com/kr/fs/blob/main/filesystem.go
+type memKrFs struct {
+	memFs afero.Fs
+}
+
+func (m memKrFs) ReadDir(dirname string) ([]os.FileInfo, error) {
+	if strings.EqualFold("/errorpath", dirname) {
+		return nil, fmt.Errorf("error reading directory")
+	}
+	return afero.ReadDir(m.memFs, dirname)
+}
+
+func (m memKrFs) Lstat(name string) (os.FileInfo, error) {
+	return m.memFs.Stat(name)
+}
+
+func (m memKrFs) Join(elem ...string) string {
+	return path.Join(elem...)
+}
+
 type SFTPCollectorSuite struct {
 	suite.Suite
-	ctrl        *gomock.Controller
-	sftpService *mocks.MockSFTPService
-	sftpClient  *mocks.MockSFTPClient
-	collector   prometheus.Collector
+	ctrl       *gomock.Controller
+	sftpClient *mocks.MockSFTPClient
+	collector  prometheus.Collector
 }
 
 func TestSFTPCollectorSuite(t *testing.T) {
@@ -33,9 +55,8 @@ func TestSFTPCollectorSuite(t *testing.T) {
 func (s *SFTPCollectorSuite) SetupTest() {
 	log.SetLevel(log.DebugLevel)
 	s.ctrl = gomock.NewController(s.T())
-	s.sftpService = mocks.NewMockSFTPService(s.ctrl)
 	s.sftpClient = mocks.NewMockSFTPClient(s.ctrl)
-	s.collector = NewSFTPCollector(s.sftpService, s.sftpClient)
+	s.collector = NewSFTPCollector(s.sftpClient)
 }
 
 func (s *SFTPCollectorSuite) TearDownTest() {
@@ -82,7 +103,6 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorDescribe() {
 func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteUpMetric() {
 	viper.Set(viperkeys.SFTPPaths, []string{})
 	s.sftpClient.EXPECT().Connect().Return(nil)
-	s.sftpService.EXPECT().ObjectStats()
 	s.sftpClient.EXPECT().Close().Return(nil)
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
@@ -127,10 +147,16 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteUpMetricAndRetur
 
 func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteFSMetrics() {
 	viper.Set(viperkeys.SFTPPaths, []string{"/path0", "/path1"})
+	memFs := afero.NewMemMapFs()
+	_ = memFs.MkdirAll("/path0", 0755)
+	_ = memFs.MkdirAll("/path1", 0755)
+	path0Walker := fs.WalkFS("/path0", memKrFs{memFs: memFs})
+	path1Walker := fs.WalkFS("/path1", memKrFs{memFs: memFs})
 	s.sftpClient.EXPECT().Connect().Return(nil)
 	s.sftpClient.EXPECT().StatVFS("/path0").Return(&sftp.StatVFS{Frsize: 10, Blocks: 1000, Bfree: 100}, nil)
 	s.sftpClient.EXPECT().StatVFS("/path1").Return(&sftp.StatVFS{Frsize: 5, Blocks: 1000, Bfree: 500}, nil)
-	s.sftpService.EXPECT().ObjectStats()
+	s.sftpClient.EXPECT().Walk("/path0").Return(path0Walker)
+	s.sftpClient.EXPECT().Walk("/path1").Return(path1Walker)
 	s.sftpClient.EXPECT().Close()
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
@@ -180,14 +206,60 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteFSMetrics() {
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path1", metric.GetLabel()[0].GetValue())
 
+	<-ch
+	<-ch
+	<-ch
+	<-ch
 	<-done
 }
 
-func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteFSMetricsForError() {
+func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteFSMetricsOnError() {
 	viper.Set(viperkeys.SFTPPaths, []string{"/path0"})
+	memFs := afero.NewMemMapFs()
+	_ = memFs.MkdirAll("/path0", 0755)
+	path0Walker := fs.WalkFS("/path0", memKrFs{memFs: memFs})
 	s.sftpClient.EXPECT().Connect().Return(nil)
 	s.sftpClient.EXPECT().StatVFS("/path0").Return(nil, fmt.Errorf("failed to get VFS stats"))
-	s.sftpService.EXPECT().ObjectStats()
+	s.sftpClient.EXPECT().Walk("/path0").Return(path0Walker)
+	s.sftpClient.EXPECT().Close()
+	ch := make(chan prometheus.Metric)
+	done := make(chan bool)
+
+	go func() {
+		s.collector.Collect(ch)
+		done <- true
+	}()
+
+	m1 := <-ch
+	s.NotContains(m1.Desc().String(), "filesystem_total_space_bytes")
+	s.NotContains(m1.Desc().String(), "filesystem_free_space_bytes")
+	m2 := <-ch
+	s.NotContains(m2.Desc().String(), "filesystem_total_space_bytes")
+	s.NotContains(m2.Desc().String(), "filesystem_free_space_bytes")
+	m3 := <-ch
+	s.NotContains(m3.Desc().String(), "filesystem_total_space_bytes")
+	s.NotContains(m3.Desc().String(), "filesystem_free_space_bytes")
+	close(ch)
+
+	<-done
+}
+
+func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectMetrics() {
+	viper.Set(viperkeys.SFTPPaths, []string{"/path0", "/path1"})
+	memFs := afero.NewMemMapFs()
+	_ = memFs.MkdirAll("/path0/1/a", 0755)
+	_ = afero.WriteFile(memFs, "/path0/0.txt", []byte("0"), 0644)
+	_ = afero.WriteFile(memFs, "/path0/1/1.txt", []byte("1"), 0644)
+	_ = afero.WriteFile(memFs, "/path0/1/a/1a.txt", []byte("1a"), 0644)
+	_ = memFs.MkdirAll("/path1/empty-dir", 0755)
+	_ = afero.WriteFile(memFs, "/path1/1.txt", []byte("helloworld"), 0644)
+	path0Walker := fs.WalkFS("/path0", memKrFs{memFs: memFs})
+	path1Walker := fs.WalkFS("/path1", memKrFs{memFs: memFs})
+	s.sftpClient.EXPECT().Connect().Return(nil)
+	s.sftpClient.EXPECT().StatVFS("/path0").Return(&sftp.StatVFS{}, nil)
+	s.sftpClient.EXPECT().StatVFS("/path1").Return(&sftp.StatVFS{}, nil)
+	s.sftpClient.EXPECT().Walk("/path0").Return(path0Walker)
+	s.sftpClient.EXPECT().Walk("/path1").Return(path1Walker)
 	s.sftpClient.EXPECT().Close()
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
@@ -198,36 +270,9 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteFSMetricsForE
 	}()
 
 	<-ch
-	close(ch)
-
-	<-done
-}
-
-func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectStats() {
-	viper.Set(viperkeys.SFTPPaths, []string{})
-	objectStats := model.ObjectStats([]model.ObjectStat{
-		{
-			Path:        "/path1",
-			ObjectCount: 100,
-			ObjectSize:  1111.11,
-		},
-		{
-			Path:        "/path2",
-			ObjectCount: 200,
-			ObjectSize:  2222.22,
-		},
-	})
-	s.sftpClient.EXPECT().Connect().Return(nil)
-	s.sftpService.EXPECT().ObjectStats().Return(objectStats)
-	s.sftpClient.EXPECT().Close()
-	ch := make(chan prometheus.Metric)
-	done := make(chan bool)
-
-	go func() {
-		s.collector.Collect(ch)
-		done <- true
-	}()
-
+	<-ch
+	<-ch
+	<-ch
 	<-ch
 	metric := &dto.Metric{}
 	var desc *prometheus.Desc
@@ -237,44 +282,49 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectStats() {
 	_ = objectCount1.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_objects_count_total", help: "Total number of objects in the path", `+
 		`constLabels: {}, variableLabels: [path]}`, desc.String())
-	s.Equal(100.0, metric.GetGauge().GetValue())
+	s.Equal(3.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
-	s.Equal("/path1", metric.GetLabel()[0].GetValue())
+	s.Equal("/path0", metric.GetLabel()[0].GetValue())
 
 	objectSize1 := <-ch
 	desc = objectSize1.Desc()
 	_ = objectSize1.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_objects_size_total_bytes", help: "Total size of all objects in the path", `+
 		`constLabels: {}, variableLabels: [path]}`, desc.String())
-	s.Equal(1111.11, metric.GetGauge().GetValue())
+	s.Equal(4.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
-	s.Equal("/path1", metric.GetLabel()[0].GetValue())
+	s.Equal("/path0", metric.GetLabel()[0].GetValue())
 
 	objectCount2 := <-ch
 	desc = objectCount2.Desc()
 	_ = objectCount2.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_objects_count_total", help: "Total number of objects in the path", `+
 		`constLabels: {}, variableLabels: [path]}`, desc.String())
-	s.Equal(200.0, metric.GetGauge().GetValue())
+	s.Equal(1.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
-	s.Equal("/path2", metric.GetLabel()[0].GetValue())
+	s.Equal("/path1", metric.GetLabel()[0].GetValue())
 
 	objectSize2 := <-ch
 	desc = objectSize2.Desc()
 	_ = objectSize2.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_objects_size_total_bytes", help: "Total size of all objects in the path", `+
 		`constLabels: {}, variableLabels: [path]}`, desc.String())
-	s.Equal(2222.22, metric.GetGauge().GetValue())
+	s.Equal(10.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
-	s.Equal("/path2", metric.GetLabel()[0].GetValue())
+	s.Equal("/path1", metric.GetLabel()[0].GetValue())
 
 	<-done
 }
 
-func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteObjectStatsForEmpty() {
-	viper.Set(viperkeys.SFTPPaths, []string{})
+func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteObjectMetricsOnError() {
+	viper.Set(viperkeys.SFTPPaths, []string{"/errorpath"})
+	memFs := afero.NewMemMapFs()
+	_ = memFs.MkdirAll("/errorpath", 0755)
+	_ = afero.WriteFile(memFs, "/errorpath/file.txt", []byte("helloworld"), 0000)
+	walker := fs.WalkFS("/errorpath", memKrFs{memFs: memFs})
 	s.sftpClient.EXPECT().Connect().Return(nil)
-	s.sftpService.EXPECT().ObjectStats().Return(model.ObjectStats(model.ObjectStats{}))
+	s.sftpClient.EXPECT().StatVFS("/errorpath").Return(&sftp.StatVFS{}, nil)
+	s.sftpClient.EXPECT().Walk("/errorpath").Return(walker)
 	s.sftpClient.EXPECT().Close()
 	ch := make(chan prometheus.Metric)
 	done := make(chan bool)
@@ -284,7 +334,15 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteObjectStatsFo
 		done <- true
 	}()
 
-	<-ch
+	m1 := <-ch
+	s.NotContains(m1.Desc().String(), "objects_count_total")
+	s.NotContains(m1.Desc().String(), "objects_size_total_bytes")
+	m2 := <-ch
+	s.NotContains(m2.Desc().String(), "objects_count_total")
+	s.NotContains(m2.Desc().String(), "objects_size_total_bytes")
+	m3 := <-ch
+	s.NotContains(m3.Desc().String(), "objects_count_total")
+	s.NotContains(m3.Desc().String(), "objects_size_total_bytes")
 	close(ch)
 
 	<-done
