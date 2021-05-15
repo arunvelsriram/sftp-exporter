@@ -33,20 +33,6 @@ func (m *MockSFTPService) EXPECT() *MockSFTPServiceMockRecorder {
 	return m.recorder
 }
 
-// FSStats mocks base method
-func (m *MockSFTPService) FSStats() model.FSStats {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FSStats")
-	ret0, _ := ret[0].(model.FSStats)
-	return ret0
-}
-
-// FSStats indicates an expected call of FSStats
-func (mr *MockSFTPServiceMockRecorder) FSStats() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FSStats", reflect.TypeOf((*MockSFTPService)(nil).FSStats))
-}
-
 // ObjectStats mocks base method
 func (m *MockSFTPService) ObjectStats() model.ObjectStats {
 	m.ctrl.T.Helper()

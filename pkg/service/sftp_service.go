@@ -9,7 +9,6 @@ import (
 
 type (
 	SFTPService interface {
-		FSStats() model.FSStats
 		ObjectStats() model.ObjectStats
 	}
 
@@ -18,28 +17,6 @@ type (
 		config     config.Config
 	}
 )
-
-func (s sftpService) FSStats() model.FSStats {
-	paths := s.config.GetSFTPPaths()
-	fsStats := make([]model.FSStat, 0)
-	for _, path := range paths {
-		statVFS, err := s.sftpClient.StatVFS(path)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"event": "collecting object stats",
-				"path":  path,
-			}).Error(err)
-			continue
-		}
-		fsStat := model.FSStat{
-			Path:       path,
-			TotalSpace: float64(statVFS.TotalSpace()),
-			FreeSpace:  float64(statVFS.FreeSpace()),
-		}
-		fsStats = append(fsStats, fsStat)
-	}
-	return fsStats
-}
 
 func (s sftpService) ObjectStats() model.ObjectStats {
 	paths := s.config.GetSFTPPaths()

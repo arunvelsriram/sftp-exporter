@@ -12,7 +12,6 @@ import (
 	"github.com/arunvelsriram/sftp-exporter/pkg/service"
 	"github.com/golang/mock/gomock"
 	"github.com/kr/fs"
-	"github.com/pkg/sftp"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/suite"
 )
@@ -58,57 +57,6 @@ func (s *SFTPServiceSuite) SetupTest() {
 
 func (s *SFTPServiceSuite) TearDownTest() {
 	s.ctrl.Finish()
-}
-
-func (s *SFTPServiceSuite) TestSFTPServiceFSStats() {
-	s.config.EXPECT().GetSFTPPaths().Return([]string{"/path0", "/path1"})
-	s.sftpClient.EXPECT().StatVFS("/path0").Return(&sftp.StatVFS{
-		Frsize: 2,
-		Blocks: 100,
-		Bfree:  50,
-	}, nil)
-	s.sftpClient.EXPECT().StatVFS("/path1").Return(&sftp.StatVFS{
-		Frsize: 5,
-		Blocks: 1000,
-		Bfree:  100,
-	}, nil)
-
-	fsStats := s.service.FSStats()
-
-	expected := model.FSStats([]model.FSStat{
-		{
-			Path:       "/path0",
-			TotalSpace: 200.00,
-			FreeSpace:  100.00,
-		},
-		{
-			Path:       "/path1",
-			TotalSpace: 5000.00,
-			FreeSpace:  500.00,
-		},
-	})
-	s.Equal(expected, fsStats)
-}
-
-func (s *SFTPServiceSuite) TestSFTPServiceFSStatsShouldSkipAndContinueInCaseOfError() {
-	s.config.EXPECT().GetSFTPPaths().Return([]string{"/path0", "/path1"})
-	s.sftpClient.EXPECT().StatVFS("/path0").Return(&sftp.StatVFS{
-		Frsize: 2,
-		Blocks: 100,
-		Bfree:  50,
-	}, nil)
-	s.sftpClient.EXPECT().StatVFS("/path1").Return(nil, fmt.Errorf("failed to get FS stats"))
-
-	fsStats := s.service.FSStats()
-
-	expected := model.FSStats([]model.FSStat{
-		{
-			Path:       "/path0",
-			TotalSpace: 200.00,
-			FreeSpace:  100.00,
-		},
-	})
-	s.Equal(expected, fsStats)
 }
 
 func (s *SFTPServiceSuite) TestSFTPServiceObjectStats() {
