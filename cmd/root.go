@@ -23,6 +23,14 @@ var rootCmd = &cobra.Command{
 		}
 		log.SetLevel(level)
 
+		log.Debugf("All configs:")
+		for key, value := range viper.AllSettings() {
+			if key == viperkeys.SFTPPassword || key == viperkeys.SFTPKey || key == viperkeys.SFTPKeyPassphrase {
+				value = "**********"
+			}
+			log.Debugf("%s: %v", key, value)
+		}
+
 		if err = server.Start(); err != nil {
 			log.Fatalf("Failed to start server: %v", err)
 		}
