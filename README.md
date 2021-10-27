@@ -2,7 +2,7 @@
 
 [Prometheus Exporter](https://prometheus.io/docs/instrumenting/exporters/) for [SFTP](https://www.ssh.com/ssh/sftp/) server.
 
-[![Build Status](https://travis-ci.org/arunvelsriram/sftp-exporter.svg?branch=master)](https://travis-ci.org/arunvelsriram/sftp-exporter)
+[![Build Status](https://app.travis-ci.com/arunvelsriram/sftp-exporter.svg?branch=master)](https://app.travis-ci.com/arunvelsriram/sftp-exporter)
 
 ## Configurations
 
