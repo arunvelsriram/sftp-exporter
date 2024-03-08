@@ -5,50 +5,37 @@
 package mocks
 
 import (
-	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
+
 	fs "github.com/kr/fs"
 	sftp "github.com/pkg/sftp"
-	reflect "reflect"
+	gomock "go.uber.org/mock/gomock"
 )
 
-// MockSFTPClient is a mock of SFTPClient interface
+// MockSFTPClient is a mock of SFTPClient interface.
 type MockSFTPClient struct {
 	ctrl     *gomock.Controller
 	recorder *MockSFTPClientMockRecorder
 }
 
-// MockSFTPClientMockRecorder is the mock recorder for MockSFTPClient
+// MockSFTPClientMockRecorder is the mock recorder for MockSFTPClient.
 type MockSFTPClientMockRecorder struct {
 	mock *MockSFTPClient
 }
 
-// NewMockSFTPClient creates a new mock instance
+// NewMockSFTPClient creates a new mock instance.
 func NewMockSFTPClient(ctrl *gomock.Controller) *MockSFTPClient {
 	mock := &MockSFTPClient{ctrl: ctrl}
 	mock.recorder = &MockSFTPClientMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockSFTPClient) EXPECT() *MockSFTPClientMockRecorder {
 	return m.recorder
 }
 
-// Connect mocks base method
-func (m *MockSFTPClient) Connect() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Connect")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Connect indicates an expected call of Connect
-func (mr *MockSFTPClientMockRecorder) Connect() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockSFTPClient)(nil).Connect))
-}
-
-// Close mocks base method
+// Close mocks base method.
 func (m *MockSFTPClient) Close() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Close")
@@ -56,13 +43,27 @@ func (m *MockSFTPClient) Close() error {
 	return ret0
 }
 
-// Close indicates an expected call of Close
+// Close indicates an expected call of Close.
 func (mr *MockSFTPClientMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockSFTPClient)(nil).Close))
 }
 
-// StatVFS mocks base method
+// Connect mocks base method.
+func (m *MockSFTPClient) Connect() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Connect")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Connect indicates an expected call of Connect.
+func (mr *MockSFTPClientMockRecorder) Connect() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockSFTPClient)(nil).Connect))
+}
+
+// StatVFS mocks base method.
 func (m *MockSFTPClient) StatVFS(path string) (*sftp.StatVFS, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "StatVFS", path)
@@ -71,13 +72,13 @@ func (m *MockSFTPClient) StatVFS(path string) (*sftp.StatVFS, error) {
 	return ret0, ret1
 }
 
-// StatVFS indicates an expected call of StatVFS
+// StatVFS indicates an expected call of StatVFS.
 func (mr *MockSFTPClientMockRecorder) StatVFS(path interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StatVFS", reflect.TypeOf((*MockSFTPClient)(nil).StatVFS), path)
 }
 
-// Walk mocks base method
+// Walk mocks base method.
 func (m *MockSFTPClient) Walk(root string) *fs.Walker {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Walk", root)
@@ -85,7 +86,7 @@ func (m *MockSFTPClient) Walk(root string) *fs.Walker {
 	return ret0
 }
 
-// Walk indicates an expected call of Walk
+// Walk indicates an expected call of Walk.
 func (mr *MockSFTPClientMockRecorder) Walk(root interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Walk", reflect.TypeOf((*MockSFTPClient)(nil).Walk), root)

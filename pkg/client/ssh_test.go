@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"reflect"
-	"runtime"
 	"testing"
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/constants/viperkeys"
@@ -75,8 +74,8 @@ func TestSSHAuthMethods(t *testing.T) {
 
 			assert.Len(t, authMethods, len(test.authMethods))
 			for i, expectedAuthMethod := range test.authMethods {
-				expected := runtime.FuncForPC(reflect.ValueOf(expectedAuthMethod).Pointer()).Name()
-				actual := runtime.FuncForPC(reflect.ValueOf(authMethods[i]).Pointer()).Name()
+				expected := reflect.ValueOf(expectedAuthMethod).Type().Name()
+				actual := reflect.ValueOf(authMethods[i]).Type().Name()
 				assert.Equal(t, expected, actual)
 			}
 			assert.Equal(t, test.err, err)

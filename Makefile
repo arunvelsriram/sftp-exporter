@@ -2,11 +2,11 @@
 
 APP=sftp-exporter
 APP_EXECUTABLE="./out/$(APP)"
-GOLANGCI_LINT_VERSION=v1.30.0
-MOCKGEN_VERSION=v1.4.3
+GOLANGCI_LINT_VERSION=v1.53.3
+MOCKGEN_VERSION=v0.2.0
 
 ifeq ($(GOLANGCI_LINT),)
-	GOLANGCI_LINT=$(shell command -v $(PWD)/bin/golangci-lint 2> /dev/null)
+	GOLANGCI_LINT=$(shell command -v golangci-lint 2> /dev/null)
 endif
 
 help: ## Prints help (only for targets with comment)
@@ -20,7 +20,7 @@ fmt: ## format code
 
 install-golangci-lint: ## install golangci-lint
 ifeq ($(GOLANGCI_LINT),)
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s $(GOLANGCI_LINT_VERSION)
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin $(GOLANGCI_LINT_VERSION)
 endif
 
 lint: install-golangci-lint ## run lint
@@ -40,7 +40,7 @@ run: ## run the app
 check: install-deps fmt lint mocks test ## runs fmt, lint, test
 
 install-mockgen: ## install mockgen
-	go get github.com/golang/mock/mockgen@$(MOCKGEN_VERSION)
+	go install go.uber.org/mock/mockgen@$(MOCKGEN_VERSION)
 
 mocks: install-mockgen ## generate mocks
 	go generate

@@ -9,7 +9,6 @@ import (
 
 	"github.com/arunvelsriram/sftp-exporter/pkg/constants/viperkeys"
 	"github.com/arunvelsriram/sftp-exporter/pkg/internal/mocks"
-	"github.com/golang/mock/gomock"
 	"github.com/kr/fs"
 	"github.com/pkg/sftp"
 	"github.com/prometheus/client_golang/prometheus"
@@ -17,6 +16,7 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/mock/gomock"
 
 	log "github.com/sirupsen/logrus"
 )
