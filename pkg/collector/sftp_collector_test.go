@@ -69,33 +69,33 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorDescribe() {
 
 	up := <-ch
 	s.Equal(`Desc{fqName: "sftp_up", help: "Tells if exporter is able to connect to SFTP", `+
-		`constLabels: {}, variableLabels: []}`,
+		`constLabels: {}, variableLabels: {}}`,
 		up.String(),
 	)
 
 	fsTotalSpace := <-ch
 	s.Equal(`Desc{fqName: "sftp_filesystem_total_space_bytes", `+
-		`help: "Total space in the filesystem containing the path", constLabels: {}, variableLabels: [path]}`,
+		`help: "Total space in the filesystem containing the path", constLabels: {}, variableLabels: {path}}`,
 		fsTotalSpace.String(),
 	)
 
 	fsFreeSpace := <-ch
 	s.Equal(`Desc{fqName: "sftp_filesystem_free_space_bytes", `+
-		`help: "Free space in the filesystem containing the path", constLabels: {}, variableLabels: [path]}`,
+		`help: "Free space in the filesystem containing the path", constLabels: {}, variableLabels: {path}}`,
 		fsFreeSpace.String(),
 	)
 
 	objectCount := <-ch
 	s.Equal(
 		`Desc{fqName: "sftp_objects_available", `+
-			`help: "Number of objects in the path", constLabels: {}, variableLabels: [path]}`,
+			`help: "Number of objects in the path", constLabels: {}, variableLabels: {path}}`,
 		objectCount.String(),
 	)
 
 	objectSize := <-ch
 	s.Equal(
 		`Desc{fqName: "sftp_objects_total_size_bytes", `+
-			`help: "Total size of all the objects in the path", constLabels: {}, variableLabels: [path]}`,
+			`help: "Total size of all the objects in the path", constLabels: {}, variableLabels: {path}}`,
 		objectSize.String(),
 	)
 }
@@ -117,7 +117,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteUpMetric() {
 	desc := up.Desc()
 	_ = up.Write(&metric)
 	s.Equal(`Desc{fqName: "sftp_up", help: "Tells if exporter is able to connect to SFTP", `+
-		`constLabels: {}, variableLabels: []}`, desc.String())
+		`constLabels: {}, variableLabels: {}}`, desc.String())
 	s.Equal(1.0, metric.GetGauge().GetValue())
 
 	<-done
@@ -139,7 +139,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteUpMetricAndRetur
 	desc := up.Desc()
 	_ = up.Write(&metric)
 	s.Equal(`Desc{fqName: "sftp_up", help: "Tells if exporter is able to connect to SFTP", `+
-		`constLabels: {}, variableLabels: []}`, desc.String())
+		`constLabels: {}, variableLabels: {}}`, desc.String())
 	s.Equal(0.0, metric.GetGauge().GetValue())
 
 	<-done
@@ -174,7 +174,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteFSMetrics() {
 	desc = totalSpace1.Desc()
 	_ = totalSpace1.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_filesystem_total_space_bytes", help: "Total space in the filesystem containing the path", `+
-		`constLabels: {}, variableLabels: [path]}`, desc.String())
+		`constLabels: {}, variableLabels: {path}}`, desc.String())
 	s.Equal(10000.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path0", metric.GetLabel()[0].GetValue())
@@ -183,7 +183,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteFSMetrics() {
 	desc = freeSpace1.Desc()
 	_ = freeSpace1.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_filesystem_free_space_bytes", help: "Free space in the filesystem containing the path", `+
-		`constLabels: {}, variableLabels: [path]}`, desc.String())
+		`constLabels: {}, variableLabels: {path}}`, desc.String())
 	s.Equal(1000.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path0", metric.GetLabel()[0].GetValue())
@@ -192,7 +192,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteFSMetrics() {
 	desc = totalSpace2.Desc()
 	_ = totalSpace2.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_filesystem_total_space_bytes", help: "Total space in the filesystem containing the path", `+
-		`constLabels: {}, variableLabels: [path]}`, desc.String())
+		`constLabels: {}, variableLabels: {path}}`, desc.String())
 	s.Equal(5000.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path1", metric.GetLabel()[0].GetValue())
@@ -201,7 +201,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteFSMetrics() {
 	desc = freeSpace2.Desc()
 	_ = freeSpace2.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_filesystem_free_space_bytes", help: "Free space in the filesystem containing the path", `+
-		`constLabels: {}, variableLabels: [path]}`, desc.String())
+		`constLabels: {}, variableLabels: {path}}`, desc.String())
 	s.Equal(2500.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path1", metric.GetLabel()[0].GetValue())
@@ -281,7 +281,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectMetrics() 
 	desc = objectCount1.Desc()
 	_ = objectCount1.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_objects_available", help: "Number of objects in the path", `+
-		`constLabels: {}, variableLabels: [path]}`, desc.String())
+		`constLabels: {}, variableLabels: {path}}`, desc.String())
 	s.Equal(3.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path0", metric.GetLabel()[0].GetValue())
@@ -290,7 +290,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectMetrics() 
 	desc = objectSize1.Desc()
 	_ = objectSize1.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_objects_total_size_bytes", help: "Total size of all the objects in the path", `+
-		`constLabels: {}, variableLabels: [path]}`, desc.String())
+		`constLabels: {}, variableLabels: {path}}`, desc.String())
 	s.Equal(4.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path0", metric.GetLabel()[0].GetValue())
@@ -299,7 +299,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectMetrics() 
 	desc = objectCount2.Desc()
 	_ = objectCount2.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_objects_available", help: "Number of objects in the path", `+
-		`constLabels: {}, variableLabels: [path]}`, desc.String())
+		`constLabels: {}, variableLabels: {path}}`, desc.String())
 	s.Equal(1.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path1", metric.GetLabel()[0].GetValue())
@@ -308,7 +308,7 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldWriteObjectMetrics() 
 	desc = objectSize2.Desc()
 	_ = objectSize2.Write(metric)
 	s.Equal(`Desc{fqName: "sftp_objects_total_size_bytes", help: "Total size of all the objects in the path", `+
-		`constLabels: {}, variableLabels: [path]}`, desc.String())
+		`constLabels: {}, variableLabels: {path}}`, desc.String())
 	s.Equal(10.0, metric.GetGauge().GetValue())
 	s.Equal("path", metric.GetLabel()[0].GetName())
 	s.Equal("/path1", metric.GetLabel()[0].GetValue())
