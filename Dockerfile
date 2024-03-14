@@ -1,4 +1,4 @@
-FROM golang:1.14-buster as builder
+FROM golang:1.22-bookworm as builder
 
 WORKDIR /sftp-exporter
 COPY ./go.mod ./
@@ -7,7 +7,7 @@ RUN go mod download -x
 COPY ./ ./
 RUN make build
 
-FROM debian:buster
+FROM debian:bookworm
 
 WORKDIR /sftp-exporter
 COPY --from=builder /sftp-exporter/out/sftp-exporter .
