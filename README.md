@@ -81,3 +81,23 @@ sftp_up 1
 ## Grafana Dashboard
 
 [Grafana Dashoard](https://grafana.com/grafana/dashboards/12828)
+
+## Contributing
+
+### Development Setup
+
+Starts sftp-servers, prometheus, grafana and sftp-exporter:
+
+```shell
+cd playground
+docker-compose up
+```
+
+| App                       | URL                        | Credentials                                                                                         |
+|---------------------------|----------------------------|-----------------------------------------------------------------------------------------------------|
+| Grafana                   | http://localhost:3000     | **User:** admin **Password:** password                                                             |
+| Prometheus                | http://localhost:9090     | NA                                                                                                  |
+| SFTP Basic Auth           | localhost:2220            | **User:** foo **Password:** password                                                               |
+| SFTP Key Auth             | localhost:2221            | **Private Key:** [key_with_passphrase](./playground/ssh/key_with_passphrase) / [key_without_passphrase](./playground/ssh/key_without_passphrase) |
+| SFTP Basic and Key Auth   | localhost:2222            | **Private Key:** [key_with_passphrase](./playground/ssh/key_with_passphrase) / [key_without_passphrase](./playground/ssh/key_without_passphrase)   |
+| SFTP Exporter             | http://localhost:8081     | **User:** foo **Password:** password **Private Key:** [key_with_passphrase](./playground/ssh/key_with_passphrase) / [key_without_passphrase](./playground/ssh/key_without_passphrase) |
