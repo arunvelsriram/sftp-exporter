@@ -61,6 +61,9 @@ services:
     image: grafana/grafana
     ports:
       - "3000:3000"
+    volumes:
+      - "$PWD/grafana/provisioning:/etc/grafana/provisioning"
+      - "$PWD/grafana/dashboards/SFTP-1621083257598.json:/var/lib/grafana/dashboards/SFTP-1621083257598.json"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=password
