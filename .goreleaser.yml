@@ -8,10 +8,6 @@ archives:
   -
     files:
       - sftp-exporter.yaml
-    replacements:
-      linux: Linux
-      darwin: Darwin
-      amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
 snapshot:
