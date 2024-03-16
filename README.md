@@ -4,6 +4,14 @@
 
 [![Build Status](https://app.travis-ci.com/arunvelsriram/sftp-exporter.svg?branch=master)](https://app.travis-ci.com/arunvelsriram/sftp-exporter)
 
+## Docker Image
+
+[arunvelsriram/sftp-exporter](https://hub.docker.com/r/arunvelsriram/sftp-exporter)
+
+```shell
+docker pull arunvelsriram/sftp-exporter
+```
+
 ## Configurations
 
 Configurations can be provided in various ways.
@@ -116,4 +124,8 @@ goreleaser --clean
 
 ```
 docker build -t arunvelsriram/sftp-exporter:<version> .
+docker tag arunvelsriram/sftp-exporter:latest
+
+docker push arunvelsriram/sftp-exporter:<version>
+docker push arunvelsriram/sftp-exporter:latest
 ```
