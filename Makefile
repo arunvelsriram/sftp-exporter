@@ -27,7 +27,7 @@ lint: install-golangci-lint ## run lint
 	$(GOLANGCI_LINT) run -v
 
 build: ## compile the app
-	go build -ldflags "-X main.version=dev" -o $(APP_EXECUTABLE) main.go
+	CGO_ENABLED=0 go build -ldflags "-X main.version=dev" -o $(APP_EXECUTABLE) main.go
 
 test: ## run unit tests
 	mkdir -p coverage

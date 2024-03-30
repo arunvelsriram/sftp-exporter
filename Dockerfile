@@ -5,7 +5,7 @@ COPY ./go.mod ./
 COPY ./go.sum ./
 RUN go mod download -x
 COPY ./ ./
-RUN make build
+RUN GOOS=linux GOARCH=$(dpkg --print-architecture) make build
 
 FROM debian:bookworm
 
