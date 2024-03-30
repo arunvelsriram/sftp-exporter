@@ -123,9 +123,9 @@ goreleaser --clean
 3. Push docker image
 
 ```
-docker build -t arunvelsriram/sftp-exporter:<version> .
-docker tag arunvelsriram/sftp-exporter:latest
+docker buildx create --name multiplatform-builder
+docker buildx use multiplatform-builder
+docker buildx inspect --bootstrap
 
-docker push arunvelsriram/sftp-exporter:<version>
-docker push arunvelsriram/sftp-exporter:latest
+docker buildx build --platform linux/amd64,linux/arm64 --tag arunvelsriram/sftp-exporter:<version> --tag arunvelsriram/sftp-exporter:latest --push .
 ```
