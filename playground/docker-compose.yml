@@ -29,9 +29,9 @@ services:
       - "$PWD/ssh/key_without_passphrase.pub:/home/foo/.ssh/keys/key_without_passphrase.pub"
       - "$PWD/ssh/key_with_passphrase.pub:/home/foo/.ssh/keys/key_with_passphrase.pub"
       - "$PWD/ssh/sshd_config:/etc/ssh/sshd_config"
-  sftp-basic-exporter:
-    container_name: sftp-basic-exporter
-    hostname: sftp-basic-exporter
+  sftp-exporter:
+    container_name: sftp-exporter
+    hostname: sftp-exporter
     build:
       context: ../
       dockerfile: ./Dockerfile
@@ -52,7 +52,7 @@ services:
     hostname: prometheus
     image: prom/prometheus
     ports:
-      - "9090:9090"
+      - "9090:9091"
     volumes:
       - "$PWD/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
   grafana:
