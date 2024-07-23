@@ -51,7 +51,7 @@ Use "sftp-exporter [command] --help" for more information about a command.
 Configs can be passed using environment variables. For example:
 
 ```
-$ SFTP_HOST=example.com SFTP_PORT=22 SFTP_USER=example SFTP_PASS=password ./sftp-exporter
+$ SFTP_HOST=example.com SFTP_PORT=22 SFTP_USER=example SFTP_PASSWORD=password ./sftp-exporter
 ```
 
 ### Config File
