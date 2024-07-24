@@ -1,23 +1,28 @@
 version: 2
+before:
+  hooks:
+    - go mod tidy
 builds:
   - env:
       - CGO_ENABLED=0
     goos:
       - linux
       - darwin
-archives:
-  -
-    files:
-      - sftp-exporter.yaml
+    goarch:
+      - amd64
+      - arm
+      - arm64
+dockers:
+  - image_templates:
+      - "arunvelsriram/{{ .ProjectName }}:{{ .Tag }}"
+      - "arunvelsriram/{{ .ProjectName }}:v{{ .Major }}"
+      - "arunvelsriram/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
+      - "arunvelsriram/{{ .ProjectName }}:latest"
 checksum:
-  name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .ProjectName }}_checksums.txt"
 changelog:
   sort: asc
   filters:
     exclude:
       - '^docs:'
       - '^test:'
-release:
-  draft: true
