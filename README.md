@@ -109,23 +109,3 @@ docker-compose up
 | SFTP Key Auth             | localhost:2221            | **Private Key:** [key_with_passphrase](./playground/ssh/key_with_passphrase) / [key_without_passphrase](./playground/ssh/key_without_passphrase) |
 | SFTP Basic and Key Auth   | localhost:2222            | **Private Key:** [key_with_passphrase](./playground/ssh/key_with_passphrase) / [key_without_passphrase](./playground/ssh/key_without_passphrase)   |
 | SFTP Exporter             | http://localhost:8081     | **User:** foo **Password:** password **Private Key:** [key_with_passphrase](./playground/ssh/key_with_passphrase) / [key_without_passphrase](./playground/ssh/key_without_passphrase) |
-
-## Deployment
-
-1. Create tag
-2. Release using goreleaser
-
-```shell
-export GITHUB_TOKEN=<token>
-goreleaser --clean
-```
-
-3. Push docker image
-
-```
-docker buildx create --name multiplatform-builder
-docker buildx use multiplatform-builder
-docker buildx inspect --bootstrap
-
-docker buildx build --platform linux/amd64,linux/arm64 --tag arunvelsriram/sftp-exporter:<version> --tag arunvelsriram/sftp-exporter:latest --push .
-```
