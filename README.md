@@ -42,6 +42,7 @@ Flags:
       --sftp-paths strings           SFTP paths (default [/])
       --sftp-port int                SFTP port (default 22)
       --sftp-user string             SFTP user
+      --sftp-statvfs bool            SFTP use StatVFS extension features
 
 Use "sftp-exporter [command] --help" for more information about a command.
 ```

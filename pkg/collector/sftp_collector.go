@@ -53,8 +53,11 @@ type SFTPCollector struct {
 
 func (s SFTPCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- up
-	ch <- fsTotalSpace
-	ch <- fsFreeSpace
+	useStatVfs := viper.GetBool(viperkeys.SFTPStatVfs)
+	if useStatVfs {
+		ch <- fsTotalSpace
+		ch <- fsFreeSpace
+	}
 	ch <- objectCount
 	ch <- objectSize
 }
@@ -71,18 +74,21 @@ func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
 	log.Debug("connected to SFTP")
 	ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 1)
 
-	log.Debug("collecting filesystem metrics")
-	for _, path := range paths {
-		log.Debugf("collecting filesystem metrics for path: %s", path)
-		statVFS, err := s.sftpClient.StatVFS(path)
-		if err != nil {
-			log.WithFields(log.Fields{"when": "collecting filesystem metrics", "path": path}).Error(err)
-		} else {
-			totalSpace := float64(statVFS.TotalSpace())
-			freeSpace := float64(statVFS.FreeSpace())
-			log.Debugf("writing filesystem metrics for path: %s", path)
-			ch <- prometheus.MustNewConstMetric(fsTotalSpace, prometheus.GaugeValue, totalSpace, path)
-			ch <- prometheus.MustNewConstMetric(fsFreeSpace, prometheus.GaugeValue, freeSpace, path)
+	useStatVfs := viper.GetBool(viperkeys.SFTPStatVfs)
+	if useStatVfs {
+		log.Debug("collecting filesystem metrics")
+		for _, path := range paths {
+			log.Debugf("collecting filesystem metrics for path: %s", path)
+			statVFS, err := s.sftpClient.StatVFS(path)
+			if err != nil {
+				log.WithFields(log.Fields{"when": "collecting filesystem metrics", "path": path}).Error(err)
+			} else {
+				totalSpace := float64(statVFS.TotalSpace())
+				freeSpace := float64(statVFS.FreeSpace())
+				log.Debugf("writing filesystem metrics for path: %s", path)
+				ch <- prometheus.MustNewConstMetric(fsTotalSpace, prometheus.GaugeValue, totalSpace, path)
+				ch <- prometheus.MustNewConstMetric(fsFreeSpace, prometheus.GaugeValue, freeSpace, path)
+			}
 		}
 	}
 

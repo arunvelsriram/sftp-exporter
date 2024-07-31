@@ -11,5 +11,6 @@ const (
 	SFTPPassword      = "sftp-password"
 	SFTPKey           = "sftp-key"
 	SFTPKeyPassphrase = "sftp-key-passphrase"
+	SFTPStatVfs       = "sftp-statvfs"
 	SFTPPaths         = "sftp-paths"
 )
