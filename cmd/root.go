@@ -63,6 +63,7 @@ func init() {
 	rootCmd.Flags().String(viperkeys.SFTPPassword, "", "SFTP password")
 	rootCmd.Flags().String(viperkeys.SFTPKey, "", "SFTP key (base64 encoded)")
 	rootCmd.Flags().String(viperkeys.SFTPKeyPassphrase, "", "SFTP key passphrase")
+	rootCmd.Flags().Bool(viperkeys.SFTPStatVfs, true, "Use StatVFS extension features")
 	rootCmd.Flags().StringSlice(viperkeys.SFTPPaths, []string{"/"}, "SFTP paths")
 
 	err := viper.BindPFlags(rootCmd.Flags())
