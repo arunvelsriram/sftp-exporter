@@ -347,3 +347,38 @@ func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotWriteObjectMetrics
 
 	<-done
 }
+
+func (s *SFTPCollectorSuite) TestSFTPCollectorCollectShouldNotCallStatVFS() {
+	viper.Set(viperkeys.SFTPPaths, []string{"/path0", "/path1"})
+	viper.Set(viperkeys.SFTPStatVfs, false)
+	memFs := afero.NewMemMapFs()
+	_ = memFs.MkdirAll("/path0", 0755)
+	_ = memFs.MkdirAll("/path1", 0755)
+	path0Walker := fs.WalkFS("/path0", memKrFs{memFs: memFs})
+	path1Walker := fs.WalkFS("/path1", memKrFs{memFs: memFs})
+	s.sftpClient.EXPECT().Connect().Return(nil)
+	s.sftpClient.EXPECT().Walk("/path0").Return(path0Walker)
+	s.sftpClient.EXPECT().Walk("/path1").Return(path1Walker)
+	s.sftpClient.EXPECT().Close()
+	ch := make(chan prometheus.Metric)
+	done := make(chan bool)
+
+	go func() {
+		s.collector.Collect(ch)
+		done <- true
+	}()
+
+	m1 := <-ch
+	s.NotContains(m1.Desc().String(), "filesystem_total_space_bytes")
+	s.NotContains(m1.Desc().String(), "filesystem_free_space_bytes")
+	m2 := <-ch
+	s.NotContains(m2.Desc().String(), "filesystem_total_space_bytes")
+	s.NotContains(m2.Desc().String(), "filesystem_free_space_bytes")
+	m3 := <-ch
+	s.NotContains(m3.Desc().String(), "filesystem_total_space_bytes")
+	s.NotContains(m3.Desc().String(), "filesystem_free_space_bytes")
+	<-ch
+	<-ch
+	close(ch)
+	<-done
+}
