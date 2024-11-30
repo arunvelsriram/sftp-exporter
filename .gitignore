@@ -4,4 +4,4 @@ out
 dist
 coverage
 .DS_Store
-
+.vscode
