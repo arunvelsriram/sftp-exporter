@@ -1,4 +1,4 @@
-FROM golang:1.22-bookworm as builder
+FROM golang:1.24-bookworm as builder
 
 WORKDIR /sftp-exporter
 COPY ./go.mod ./
