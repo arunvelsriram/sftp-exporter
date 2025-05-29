@@ -13,5 +13,14 @@ jobs:
           cache: false
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Check
+      - name: Check - fmt, lint and test
         run: make check
+      - name: Build Docker image
+        run: docker build -t sftp-exporter:latest -f Dockerfile .
+      - name: Trivy Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: sftp-exporter:latest
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
