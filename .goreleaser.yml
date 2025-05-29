@@ -14,7 +14,7 @@ builds:
       - arm64
 dockers:
   - dockerfile: Dockerfile
-    use_buildx: true
+    use: buildx
     build_flag_templates:
       - "--pull"
       - "--platform=linux/amd64,linux/arm64"
