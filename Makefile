@@ -44,3 +44,10 @@ install-mockgen: ## install mockgen
 
 mocks: install-mockgen ## generate mocks
 	go generate
+
+docker-build: ## Build the Docker image
+	docker build -t $(APP):latest -f Dockerfile .
+
+scan-image: docker-build ## Scan the built Docker image for vulnerabilities
+	DOCKER_HOST_URL=$$(docker context inspect --format '{{.Endpoints.docker.Host}}' 2>/dev/null || echo "unix:///var/run/docker.sock") ; \
+	trivy image --docker-host $$DOCKER_HOST_URL $(APP):latest
