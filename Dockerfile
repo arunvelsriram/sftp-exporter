@@ -11,5 +11,4 @@ FROM gcr.io/distroless/static-debian12:nonroot
 
 COPY --from=builder /sftp-exporter/out/sftp-exporter /usr/local/bin/
 EXPOSE 8080
-USER sftp-exporter
 ENTRYPOINT ["sftp-exporter"]
