@@ -2,8 +2,8 @@
 
 APP=sftp-exporter
 APP_EXECUTABLE="./out/$(APP)"
-GOLANGCI_LINT_VERSION=v1.59.1
-MOCKGEN_VERSION=v0.2.0
+GOLANGCI_LINT_VERSION=v2.1.6
+MOCKGEN_VERSION=v0.5.2
 
 ifeq ($(GOLANGCI_LINT),)
 	GOLANGCI_LINT=$(shell command -v golangci-lint 2> /dev/null)

@@ -70,7 +70,11 @@ func (s SFTPCollector) Collect(ch chan<- prometheus.Metric) {
 		log.WithField("when", "collecting up metric").Error(err)
 		return
 	}
-	defer s.sftpClient.Close()
+	defer func() {
+		if err := s.sftpClient.Close(); err != nil {
+			log.WithField("when", "closing sftp client").Error(err)
+		}
+	}()
 	log.Debug("connected to SFTP")
 	ch <- prometheus.MustNewConstMetric(up, prometheus.GaugeValue, 1)
 
