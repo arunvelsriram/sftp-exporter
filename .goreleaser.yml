@@ -13,7 +13,14 @@ builds:
       - arm
       - arm64
 dockers:
-  - image_templates:
+  - dockerfile: Dockerfile
+    use_buildx: true
+    build_flag_templates:
+      - "--pull"
+      - "--platform=linux/amd64,linux/arm64"
+    extra_files:
+      - .
+    image_templates:
       - "arunvelsriram/{{ .ProjectName }}:{{ .Tag }}"
       - "arunvelsriram/{{ .ProjectName }}:v{{ .Major }}"
       - "arunvelsriram/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
