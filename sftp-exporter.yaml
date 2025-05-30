@@ -3,4 +3,5 @@ sftp-port: 22
 sftp-user: username
 sftp-password: password
 sftp-paths: ["/path1", "/path2"]
+sftp-timeout: 20s
 log-level: info

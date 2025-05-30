@@ -84,6 +84,7 @@ func NewSSHClient() (*ssh.Client, error) {
 		User:            viper.GetString(viperkeys.SFTPUser),
 		Auth:            auth,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		Timeout:         viper.GetDuration(viperkeys.SFTPTimeout),
 	}
 	return ssh.Dial("tcp", addr, clientConfig)
 }
